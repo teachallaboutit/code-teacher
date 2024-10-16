@@ -68,6 +68,7 @@ function python_code_editor_shortcode($atts) {
     
     <div id="editor-controls">
         <button id="run-code">Run Code</button>
+        <button id="hint-button">Hint</button>
         <button id="help-button">Help</button>
         <div id="hint-section" style="display: none;"><strong>Hint:</strong> <?php echo esc_html($hint_text); ?></div>
     </div>
@@ -79,4 +80,41 @@ function python_code_editor_shortcode($atts) {
     return ob_get_clean(); // Return the buffered content
 }
 add_shortcode('python_editor', 'python_code_editor_shortcode');
+
+
+// Handle AJAX request to execute code
+function python_code_editor_execute_code() {
+    // Get the posted code
+    $code = isset($_POST['code']) ? sanitize_textarea_field($_POST['code']) : '';
+
+    if (empty($code)) {
+        wp_send_json_error('Code is required.');
+    }
+
+    // Assuming you have your Flask endpoint set up correctly
+    $api_url = 'https://teachallaboutit.pythonanywhere.com/api/execute';
+
+    $response = wp_remote_post($api_url, array(
+        'headers' => array('Content-Type' => 'application/json'),
+        'body'    => json_encode(array('code' => $code)),
+        'method'  => 'POST'
+    ));
+
+    if (is_wp_error($response)) {
+        wp_send_json_error('Failed to contact the API: ' . $response->get_error_message());
+    }
+
+    $response_body = wp_remote_retrieve_body($response);
+    $data = json_decode($response_body, true);
+
+    if ($data && isset($data['success']) && $data['success']) {
+        wp_send_json_success($data);
+    } else {
+        $error_message = isset($data['output']) ? $data['output'] : 'Unexpected response format from the API.';
+        wp_send_json_error($error_message);
+    }
+}
+add_action('wp_ajax_execute_code', 'python_code_editor_execute_code');
+add_action('wp_ajax_nopriv_execute_code', 'python_code_editor_execute_code');
+
 ?>

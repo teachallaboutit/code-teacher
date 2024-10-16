@@ -88,6 +88,20 @@
     background-color: #fc956d;
 }
 
+#hint-button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    background-color: #ffbba1;
+    color: black;
+}
+#hint-button:hover {
+    background-color: #fc956d;
+}
+
+
 
 
 /* ======================   Helper Styling ========================= */

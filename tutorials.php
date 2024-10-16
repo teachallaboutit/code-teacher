@@ -3,8 +3,8 @@ $tutorials = array(
     array(
         'title' => 'Welcome To Programming!',
         'challenge' => 'Show the words "Hello, World!" on the screen.',
-        'skeleton_code' => "print('')",
-        'example_answer' => "print('Hello, World!')",
+        'skeleton_code' => 'print("")',
+        'example_answer' => 'print("Hello, World!")',
         'hint' => 'The print function is used to display text. Text is surrounded by "double quotes".'
     ),
     array(
