@@ -9,6 +9,31 @@ document.addEventListener('DOMContentLoaded', function () {
     const outputElement = document.getElementById('output');
     const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
 
+    // List of waiting messages
+    const waitingMessages = [
+        'Thinking of ways to help, please wait...',
+        'Checking my big book of programming languages...',
+        'Consulting the big python...',
+        'Compiling a great response, please be patient...',
+        'Searching through my knowledge banks...',
+        'Cracking the code, hang tight...',
+        'Running a debug on my ideas...',
+        'Loading knowledge *checks notes*...',
+        'Trying to avoid an infinite loop of thinking...',
+        'Finding the correct answer...',
+        'Parsing your code... almost there...',
+        'Just one more iteration...',
+        'Looking up an answer in my brain library...',
+        'Braving the depths of my revision notes for an answer...',
+        'Breaking out of my thought loop...',
+        'Initializing helpful advice...',
+        'Clearing out my hard drive to make room for ideas...',
+        'Optimizing solution... please hold...',
+        'Calling a function from my brain...',
+        'Testing an idea... standby...'
+    ];
+    
+
     if (editorElement && typeof CodeMirror !== 'undefined') {
         editor = CodeMirror(editorElement, {
             mode: 'python',
@@ -72,8 +97,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            // Display a random waiting message
+            const randomIndex = Math.floor(Math.random() * waitingMessages.length);
             speechBubble.style.display = 'block';
-            speechBubble.innerText = 'Thinking of ways to help, please wait...';
+            speechBubble.innerText = waitingMessages[randomIndex];
             helperCharacter.style.display = 'block';
             helpButton.innerText = 'Hide Help';
 
