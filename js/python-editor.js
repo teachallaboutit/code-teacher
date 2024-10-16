@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const helperCharacter = document.getElementById('helper-character');
     const speechBubble = document.getElementById('speech-bubble');
     const outputElement = document.getElementById('output');
+    const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
 
     if (editorElement && typeof CodeMirror !== 'undefined') {
         editor = CodeMirror(editorElement, {
@@ -24,9 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
         runButton.addEventListener('click', function () {
             const code = editor.getValue().trim();
 
-            // Debugging log to inspect the code before sending
-            console.log("Code before sending:", code);
-
             if (!code) {
                 outputElement.innerText = 'Please enter some code to execute.';
                 return;
@@ -40,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 body: new URLSearchParams({
-                    action: 'execute_code', // Ensure that this action matches the one defined in your PHP
+                    action: 'execute_code',
                     code: code
                 }).toString()
             })
@@ -61,16 +59,51 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Run button or output element not found in the DOM');
     }
 
-    if (helpButton && helperCharacter && speechBubble) {
+    if (helpButton && editor && speechBubble && helperCharacter) {
         helpButton.addEventListener('click', function () {
-            const isVisible = helperCharacter.style.display === 'block';
-            helperCharacter.style.display = isVisible ? 'none' : 'block';
-            speechBubble.style.display = isVisible ? 'none' : 'block';
-            speechBubble.innerText = "Hi, it looks like you need help with your code...";
-            helpButton.innerText = isVisible ? 'Help' : 'Hide Help';
+            const studentCode = editor.getValue().trim();
+            const exampleAnswer = editorElement.dataset.tutorialCode;
+
+            if (!studentCode) {
+                speechBubble.style.display = 'block';
+                speechBubble.innerText = 'Please write some code before asking for help.';
+                helperCharacter.style.display = 'block';
+                helpButton.innerText = 'Hide Help';
+                return;
+            }
+
+            speechBubble.style.display = 'block';
+            speechBubble.innerText = 'Thinking of ways to help, please wait...';
+            helperCharacter.style.display = 'block';
+            helpButton.innerText = 'Hide Help';
+
+            fetch(ajax_object.ajax_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                },
+                body: new URLSearchParams({
+                    action: 'get_chatgpt_help',
+                    challenge: challengeText,
+                    student_code: studentCode,
+                    example_answer: exampleAnswer
+                }).toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    speechBubble.innerText = data.data;
+                } else {
+                    speechBubble.innerText = 'Error: ' + (data.data || 'Unable to retrieve help at this moment.');
+                }
+            })
+            .catch(error => {
+                console.error('Error during ChatGPT AJAX request:', error);
+                speechBubble.innerText = 'Error connecting to help service.';
+            });
         });
     } else {
-        console.error('Help button, helper character, or speech bubble not found in the DOM');
+        console.error('Help button, editor, or speech bubble not found in the DOM');
     }
 
     if (hintButton && helperCharacter && speechBubble) {

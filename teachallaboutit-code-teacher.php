@@ -176,25 +176,33 @@ function python_code_editor_get_chatgpt_help() {
         wp_send_json_error('API key not set.');
     }
 
-    // Get the message from the request
-    $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
-    if (empty($message)) {
-        wp_send_json_error('Message is required.');
+    // Get the data from the request
+    $challenge = isset($_POST['challenge']) ? sanitize_textarea_field($_POST['challenge']) : '';
+    $student_code = isset($_POST['student_code']) ? sanitize_textarea_field($_POST['student_code']) : '';
+    $example_answer = isset($_POST['example_answer']) ? sanitize_textarea_field($_POST['example_answer']) : '';
+
+    if (empty($challenge) || empty($student_code) || empty($example_answer)) {
+        wp_send_json_error('All fields are required.');
     }
 
-    // The following code is commented out to disable actual API call for now
-    /*
-    // Call ChatGPT API
-    $api_url = 'https://api.openai.com/v1/completions';
+    // Prepare the prompt
+    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language in 30 words or less on next steps or errors, without giving the answer.";
+    $prompt += "Please format the response for ease of reading."
+
+    // Call ChatGPT API with GPT-4 model
+    $api_url = 'https://api.openai.com/v1/chat/completions';
     $response = wp_remote_post($api_url, array(
         'headers' => array(
             'Content-Type' => 'application/json',
             'Authorization' => 'Bearer ' . $api_key,
         ),
         'body'    => json_encode(array(
-            'model' => 'text-davinci-003',
-            'prompt' => $message,
-            'max_tokens' => 150,
+            'model' => 'gpt-4',
+            'messages' => array(
+                array('role' => 'system', 'content' => 'You are a helpful tutor.'),
+                array('role' => 'user', 'content' => $prompt)
+            ),
+            'max_tokens' => 30,
             'temperature' => 0.7,
         )),
         'method'  => 'POST'
@@ -207,13 +215,18 @@ function python_code_editor_get_chatgpt_help() {
     $response_body = wp_remote_retrieve_body($response);
     $data = json_decode($response_body, true);
 
-    if (isset($data['choices'][0]['text'])) {
-        wp_send_json_success(trim($data['choices'][0]['text']));
+    // Updated response handling for GPT-4
+    if (isset($data['choices'][0]['message']['content'])) {
+        $advice = trim($data['choices'][0]['message']['content']);
+        wp_send_json_success($advice);
     } else {
-        wp_send_json_error('Unexpected response format from the API.');
+        // Log unexpected response for debugging
+        error_log('Unexpected API response: ' . print_r($data, true));
+        wp_send_json_error('Unexpected response format from the API. Please check logs for more details.');
     }
-    */
 }
+
+
 add_action('wp_ajax_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
 add_action('wp_ajax_nopriv_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
 
