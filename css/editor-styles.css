@@ -1,0 +1,128 @@
+/* ======================   Code Editor & Output ========================= */
+
+.editor-container {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    height: 400px;
+}
+#editor-container, #output-container {
+    flex: 1;
+    height: 100%;
+}
+#editor-container, #output-container {
+    display: flex;
+    flex-direction: column;
+}
+.container-header {
+    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    background-color: #97BAFF;
+    color: black;
+    padding: 5px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+.CodeMirror {
+    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+    font-size: 16px;
+    border: 2px solid #97BAFF;
+    border-radius: 0 0 10px 10px;
+    height: 100%;
+}
+#output-container {
+    border: 2px solid #97BAFF;
+    border-radius: 10px;
+    overflow: auto;
+    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+    font-size: 16px;
+    background-color: #001f3f;
+    height: 100%;
+}
+
+
+#output {
+    padding: 10px;
+    flex-grow: 1;
+    font-size: 16px;
+    background-color: #001f3f;
+    color: #ffffff;
+	overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+#output-section {
+    position: relative;
+    margin-top: 20px;
+}
+
+/* ======================   Button Controls ========================= */
+#editor-controls {
+    margin-top: 10px;
+}
+#run-code {
+	font-size: 20px;
+    margin-top: 10px;
+    background-color: #FD6428;
+    color: black;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#run-code:hover {
+    background-color: #e05520;
+}
+#help-button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    background-color: #ffbba1;
+    color: black;
+}
+#help-button:hover {
+    background-color: #fc956d;
+}
+
+
+
+/* ======================   Helper Styling ========================= */
+
+#helper-character {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 150px;
+    display: none;
+    z-index: 1000;
+}
+#speech-bubble {
+    position: absolute;
+    bottom: 160px;
+    right: 130px;
+    width: 230px;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 2px solid #97BAFF;
+    border-radius: 10px;
+    color: #000000;
+    display: none;
+    z-index: 1001;
+    font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;
+    font-size: 16px;
+}
+#speech-bubble:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #ffffff;
+    bottom: -15px;
+    right: 30px;
+}
