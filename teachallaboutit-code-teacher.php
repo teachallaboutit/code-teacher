@@ -186,7 +186,7 @@ function python_code_editor_get_chatgpt_help() {
     }
 
     // Prepare the prompt
-    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language in 30 words or less on next steps or errors, without giving the answer. Please format the response for ease of reading and word the response as if you are a friend of the same age.";
+    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language of up to 100 characters on next steps or errors, without giving the answer. Please word the response as if you are a British friend of the same age and don't truncate sentences.";
 
     // Call ChatGPT API with GPT-4 model
     $api_url = 'https://api.openai.com/v1/chat/completions';
@@ -201,7 +201,7 @@ function python_code_editor_get_chatgpt_help() {
                 array('role' => 'system', 'content' => 'You are a helpful tutor.'),
                 array('role' => 'user', 'content' => $prompt)
             ),
-            'max_tokens' => 30,
+            'max_tokens' => 40,
             'temperature' => 0.7,
         )),
         'method'  => 'POST'
