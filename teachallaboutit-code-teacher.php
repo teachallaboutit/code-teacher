@@ -117,4 +117,104 @@ function python_code_editor_execute_code() {
 add_action('wp_ajax_execute_code', 'python_code_editor_execute_code');
 add_action('wp_ajax_nopriv_execute_code', 'python_code_editor_execute_code');
 
+// Add admin menu for ChatGPT API settings  - Added in V1.2
+function python_code_editor_admin_menu() {
+    add_menu_page(
+        'Python Code Teacher Settings',
+        'Python Teacher Settings',
+        'manage_options',
+        'python-code-editor-settings',
+        'python_code_editor_settings_page',
+        'dashicons-admin-generic',
+        81
+    );
+}
+add_action('admin_menu', 'python_code_editor_admin_menu');
+
+// Settings page content
+function python_code_editor_settings_page() {
+    // Save settings if form is submitted
+    if (isset($_POST['submit'])) {
+        check_admin_referer('python_code_editor_settings');
+        $api_key = sanitize_text_field($_POST['chatgpt_api_key']);
+        update_option('python_code_editor_chatgpt_api_key', $api_key);
+        echo '<div class="updated"><p>Settings saved.</p></div>';
+    }
+
+    // Get the current API key
+    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
+    ?>
+    <div class="wrap">
+        <h1>Python Code Editor Settings</h1>
+        <form method="post" action="">
+            <?php wp_nonce_field('python_code_editor_settings'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">ChatGPT API Key</th>
+                    <td><input type="text" name="chatgpt_api_key" value="<?php echo esc_attr($api_key); ?>" style="width: 400px;"></td>
+                </tr>
+            </table>
+            <p>To use ChatGPT integration, you need an API key. Please follow these steps:</p>
+            <ol>
+                <li>Visit the <a href="https://platform.openai.com/signup" target="_blank">OpenAI Platform</a> and create an account if you don't already have one.</li>
+                <li>After logging in, go to the <a href="https://platform.openai.com/account/api-keys" target="_blank">API Keys</a> section.</li>
+                <li>Click on "Create new secret key" to generate a new API key.</li>
+                <li>Copy the generated key and paste it into the field above.</li>
+                <li>Click "Save Changes" to save your key securely.</li>
+            </ol>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+
+// Handle AJAX request to get help from ChatGPT
+function python_code_editor_get_chatgpt_help() {
+    // Get the API key from settings
+    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
+    if (empty($api_key)) {
+        wp_send_json_error('API key not set.');
+    }
+
+    // Get the message from the request
+    $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
+    if (empty($message)) {
+        wp_send_json_error('Message is required.');
+    }
+
+    // The following code is commented out to disable actual API call for now
+    /*
+    // Call ChatGPT API
+    $api_url = 'https://api.openai.com/v1/completions';
+    $response = wp_remote_post($api_url, array(
+        'headers' => array(
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $api_key,
+        ),
+        'body'    => json_encode(array(
+            'model' => 'text-davinci-003',
+            'prompt' => $message,
+            'max_tokens' => 150,
+            'temperature' => 0.7,
+        )),
+        'method'  => 'POST'
+    ));
+
+    if (is_wp_error($response)) {
+        wp_send_json_error('Failed to contact the API: ' . $response->get_error_message());
+    }
+
+    $response_body = wp_remote_retrieve_body($response);
+    $data = json_decode($response_body, true);
+
+    if (isset($data['choices'][0]['text'])) {
+        wp_send_json_success(trim($data['choices'][0]['text']));
+    } else {
+        wp_send_json_error('Unexpected response format from the API.');
+    }
+    */
+}
+add_action('wp_ajax_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
+add_action('wp_ajax_nopriv_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
+
 ?>
