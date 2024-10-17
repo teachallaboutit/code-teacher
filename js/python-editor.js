@@ -79,14 +79,14 @@ document.addEventListener('DOMContentLoaded', function () {
     if (runButton && editor && outputElement) {
         runButton.addEventListener('click', function () {
             const code = editor.getValue().trim();
-
+    
             if (!code) {
                 outputElement.innerText = 'Please enter some code to execute.';
                 return;
             }
-
+    
             outputElement.innerText = 'Running...';
-
+    
             fetch(ajax_object.ajax_url, {
                 method: 'POST',
                 headers: {
@@ -99,20 +99,25 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success && data.data && data.data.success) {
+                if (data.success) {
+                    // Correctly access the output field from the response
                     outputElement.innerText = data.data.output;
                 } else {
-                    outputElement.innerText = 'Error: ' + (data.data?.output || 'Unknown error.');
+                    // Display the error message from the response
+                    outputElement.innerText = `Error: ${data.data}`;
                 }
             })
             .catch(error => {
                 console.error('Error during AJAX request:', error);
-                outputElement.innerText = 'Error executing code.';
+                outputElement.innerText = 'Error executing code. Please try again.';
             });
         });
-    } else {
-        console.error('Run button or output element not found in the DOM');
     }
+    
+    
+    
+    
+    
 
     // Save Code Button Logic
     if (saveButton && editor) {

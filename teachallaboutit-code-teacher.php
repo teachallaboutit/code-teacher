@@ -135,7 +135,7 @@ function python_code_editor_execute_code() {
         wp_send_json_error('Code is required.');
     }
 
-    // Assuming you have your Flask endpoint set up correctly
+    // Flask endpoint (currently hardcoded for testing)
     $api_url = 'https://teachallaboutit.pythonanywhere.com/api/execute';
 
     $response = wp_remote_post($api_url, array(
@@ -152,7 +152,7 @@ function python_code_editor_execute_code() {
     $data = json_decode($response_body, true);
 
     if ($data && isset($data['success']) && $data['success']) {
-        wp_send_json_success($data);
+        wp_send_json_success(['output' => $data['output']]);
     } else {
         $error_message = isset($data['output']) ? $data['output'] : 'Unexpected response format from the API.';
         wp_send_json_error($error_message);
@@ -179,7 +179,7 @@ function python_code_editor_get_chatgpt_help() {
     }
 
     // Prepare the prompt
-    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language of up to 100 characters on next steps or errors, without giving the answer. Please word the response as if you are a British friend of the same age and don't truncate sentences. Please don't call them names like pal, buddy, or mate.";
+    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language of up to 100 characters on next steps or errors, without giving the answer. For code more than 10 lines long, indicate a line number to look at. Please word the response as if you are a British friend of the same age and don't truncate sentences. Please don't call them names like pal, buddy, or mate.";
 
     // Call ChatGPT API with GPT-4 model
     $api_url = 'https://api.openai.com/v1/chat/completions';
