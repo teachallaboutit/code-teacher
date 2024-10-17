@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let editor;
     const editorElement = document.getElementById('editor');
     const runButton = document.getElementById('run-code');
+    const saveButton = document.getElementById('save-code');
     const helpButton = document.getElementById('help-button');
     const hintButton = document.getElementById('hint-button');
     const helperCharacter = document.getElementById('helper-character');
@@ -9,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const hintSection = document.getElementById('hint-section');
     const outputElement = document.getElementById('output');
     const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
+    const tutorialId = editorElement.dataset.tutorialId; // Correct dataset to represent tutorial ID
 
     // List of waiting messages
     const waitingMessages = [
@@ -36,11 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize CodeMirror editor
     if (editorElement && typeof CodeMirror !== 'undefined') {
+        const initialCode = editorElement.dataset.tutorialCode || "print('Hello, World!')";
         editor = CodeMirror(editorElement, {
             mode: 'python',
             lineNumbers: true,
             theme: 'default',
-            value: editorElement.dataset.tutorialCode || "print('Hello, World!')"
+            value: initialCode
         });
     } else if (editorElement) {
         console.error('CodeMirror not found. Please make sure CodeMirror is loaded properly.');
@@ -85,6 +88,71 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('Run button or output element not found in the DOM');
     }
 
+// Save Code Button Logic
+if (saveButton && editor) {
+    saveButton.addEventListener('click', function () {
+        const code = editor.getValue().trim();
+
+        if (!tutorialId) {
+            console.error('Tutorial ID is missing. Cannot save progress.');
+            return;
+        }
+
+        // Show "Saving..." message
+        speechBubble.style.display = 'block';
+        speechBubble.innerText = 'Saving... please wait.';
+        helperCharacter.style.display = 'block';
+
+        // Save user progress using AJAX
+        fetch(ajax_object.ajax_url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            },
+            body: new URLSearchParams({
+                action: 'save_python_progress',
+                tutorial_id: tutorialId,
+                code: code
+            }).toString()
+        })
+        .then(response => {
+            // Check if response is valid JSON
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update the speech bubble to show that saving was successful
+                speechBubble.innerText = "I've saved your code, so it's safe for next time!";
+            } else {
+                console.error('Failed to save progress:', data.data);
+                speechBubble.innerText = 'Failed to save progress. Please try again.';
+            }
+
+            // Hide the helper character and speech bubble after 3 seconds
+            setTimeout(() => {
+                speechBubble.style.display = 'none';
+                helperCharacter.style.display = 'none';
+            }, 3000);
+        })
+        .catch(error => {
+            console.error('Error during save progress request:', error);
+            speechBubble.innerText = 'Error saving progress. Please try again.';
+
+            // Hide the helper character and speech bubble after 3 seconds
+            setTimeout(() => {
+                speechBubble.style.display = 'none';
+                helperCharacter.style.display = 'none';
+            }, 3000);
+        });
+    });
+}
+
+
+
+
     // Help Button Logic
     if (helpButton && editor && speechBubble && helperCharacter) {
         helpButton.addEventListener('click', function () {
@@ -111,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const randomIndex = Math.floor(Math.random() * waitingMessages.length);
                     speechBubble.style.display = 'block';
                     speechBubble.innerText = waitingMessages[randomIndex];
-                    
+
                     fetch(ajax_object.ajax_url, {
                         method: 'POST',
                         headers: {

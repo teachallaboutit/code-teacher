@@ -1,4 +1,27 @@
 /* ======================   Code Editor & Output ========================= */
+.code-teacher-container{
+    background-color: #fffcd4;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-style: solid;
+    border-width: 5px;
+    border-color: #ca8e76;
+    padding-top: 10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+.challenge-text{
+    width: 100%;
+}
+
+.editor-panel{
+    width: 100%;
+}
 
 .editor-container {
     display: flex;
@@ -75,6 +98,22 @@
 #run-code:hover {
     background-color: #e05520;
 }
+
+#save-code {
+	font-size: 20px;
+    margin-top: 10px;
+    background-color: #a53002;
+    color: black;
+    font-weight: bold;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#save-code:hover {
+    background-color: #e04304;
+}
+
 #help-button {
     margin-left: 10px;
     padding: 10px 20px;

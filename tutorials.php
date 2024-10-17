@@ -17,9 +17,9 @@ $tutorials = array(
     array(
         'title' => 'Variables with Numbers',
         'challenge' => 'Create a variable called number that stores the number 10.\nOutput the original number to the screen, then output the same number reduced by 5.',
-        'skeleton_code' => "print(number)\n\nprint(number)",
-        'example_answer' => "number = 10\nprint(number)\nprint(number - 5)",
-        'hint' => "When you store a variable in python that's a number, you can add the calculation to the variable.\nMake the computer so the hard work for you!" 
+        'skeleton_code' => 'print(number)\n\nprint(number)',
+        'example_answer' => 'number = 10\nprint(number)\nprint(number - 5)',
+        'hint' => 'When you store a variable in python that\'s a number, you can add the calculation to the variable.\nMake the computer so the hard work for you!' 
     )
 );
 ?>

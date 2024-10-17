@@ -44,6 +44,13 @@ function python_code_editor_shortcode($atts) {
     // Select the tutorial based on the attribute
     $tutorial = isset($tutorials[$atts['tutorial']]) ? $tutorials[$atts['tutorial']] : null;
 
+     // Get the current user ID
+     $user_id = get_current_user_id();
+     $tutorial_id = $atts['tutorial'];
+ 
+     // Check if the user has saved progress
+     $saved_code = get_user_meta($user_id, 'python_editor_progress_' . $tutorial_id, true);
+
     // Prepare tutorial content
     $title_text = $tutorial ? $tutorial['title'] : '';
     $challenge_text = $tutorial ? $tutorial['challenge'] : '';
@@ -51,14 +58,19 @@ function python_code_editor_shortcode($atts) {
     $example_answer = $tutorial ? $tutorial['example_answer'] : '';
     $hint_text = $tutorial ? $tutorial['hint'] : '';
 
+    // Determine the initial code to load (if previously saved, student code loads, otherwise skeleton code will load)
+    $initial_code = !empty($saved_code) ? $saved_code : $skeleton_code;
+
     // Editor HTML
     ob_start(); // Start output buffering
     ?>
+    <div class = "code-teacher-container">
     <div class="challenge-text"><h2><?php echo esc_attr($title_text ); ?></h2><p><?php echo esc_html($challenge_text); ?></p></div>
+    <div class="editor-panel">
     <div class="editor-container">
         <div id="editor-container">
-            <div class="container-header">Python Code - Sandbox</div>
-            <div id="editor" class="CodeMirror" data-tutorial-code="<?php echo esc_attr($skeleton_code); ?>"></div>
+            <div class="container-header">Your Python Code</div>
+            <div id="editor" class="CodeMirror" data-tutorial-id="<?php echo esc_attr($tutorial_id); ?>" data-tutorial-code="<?php echo esc_attr($initial_code); ?>"></div>
         </div>
         <div id="output-container">
             <div class="container-header">Your Code Output</div>
@@ -68,6 +80,7 @@ function python_code_editor_shortcode($atts) {
     
     <div id="editor-controls">
         <button id="run-code">Run Code</button>
+        <button id="save-code">Save Progress</button>
         <button id="hint-button">Hint</button>
         <button id="help-button">Help</button>
         <div id="hint-section" style="display: none;"><strong>Hint:</strong> <?php echo esc_html($hint_text); ?></div>
@@ -75,6 +88,8 @@ function python_code_editor_shortcode($atts) {
     <div id="output-section">
         <img id="helper-character" src="<?php echo esc_url(plugins_url('img/Alex_Chat_Bot.png', __FILE__)); ?>" alt="Alex Help Character" style="display: none;">
         <div id="speech-bubble">Hi, it looks like you need help with your code...</div>
+    </div>
+</div>
     </div>
     <?php
     return ob_get_clean(); // Return the buffered content
@@ -186,7 +201,7 @@ function python_code_editor_get_chatgpt_help() {
     }
 
     // Prepare the prompt
-    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language of up to 100 characters on next steps or errors, without giving the answer. Please word the response as if you are a British friend of the same age and don't truncate sentences.";
+    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge . "\nStudent's code: " . $student_code . "\nExample answer: " . $example_answer . "\nProvide some advice using child friendly language of up to 100 characters on next steps or errors, without giving the answer. Please word the response as if you are a British friend of the same age and don't truncate sentences. Please don't call them names like pal, buddy, or mate.";
 
     // Call ChatGPT API with GPT-4 model
     $api_url = 'https://api.openai.com/v1/chat/completions';
@@ -228,5 +243,38 @@ function python_code_editor_get_chatgpt_help() {
 
 add_action('wp_ajax_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
 add_action('wp_ajax_nopriv_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
+
+
+// -------------- Saving User Progress -------------------------
+
+// Handle AJAX request to save user progress
+function python_code_editor_save_progress() {
+    // Ensure the user is logged in
+    if (!is_user_logged_in()) {
+        wp_send_json_error('User not logged in.');
+    }
+
+    // Get current user ID
+    $user_id = get_current_user_id();
+    $tutorial_id = isset($_POST['tutorial_id']) ? sanitize_text_field($_POST['tutorial_id']) : '';
+    $code = isset($_POST['code']) ? sanitize_textarea_field($_POST['code']) : '';
+
+    // Debugging: Log received data only in the logs
+    if (empty($tutorial_id) || empty($code)) {
+        error_log('Save Progress Error: tutorial_id is ' . $tutorial_id . ', code length is ' . strlen($code));
+    }
+
+    // Save the progress as user meta data
+    if (!empty($tutorial_id) && !empty($code)) {
+        update_user_meta($user_id, 'python_editor_progress_' . $tutorial_id, $code);
+        wp_send_json_success('Progress saved successfully.');
+    } else {
+        wp_send_json_error('Invalid data. Tutorial ID: ' . $tutorial_id . ', Code Length: ' . strlen($code));
+    }
+}
+add_action('wp_ajax_save_python_progress', 'python_code_editor_save_progress');
+
+
+
 
 ?>
