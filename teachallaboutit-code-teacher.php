@@ -116,7 +116,7 @@ function python_code_editor_shortcode($atts) {
                 
             </div>
             <div id="output-section">
-                <img id="helper-character" src="<?php echo esc_url(plugins_url('img/Alex_Chat_Bot.png', __FILE__)); ?>" alt="Alex Help Character" style="display: none;">
+                <img id="helper-character" src="<?php echo esc_url(plugins_url('img/Alex_Chat_Bot_duck.png', __FILE__)); ?>" alt="Alex Help Character" style="display: none;">
                 <div id="speech-bubble">Hi, it looks like you need help with your code...</div>
             </div>
         </div>

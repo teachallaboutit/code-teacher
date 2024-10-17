@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
+
     if (runButton && editor && outputElement) {
         runButton.addEventListener('click', function () {
             const code = editor.getValue().trim();
@@ -84,6 +85,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 outputElement.innerText = 'Please enter some code to execute.';
                 return;
             }
+    
+            // Save the code silently before executing
+            saveCodeSilently(code,tutorialId);
     
             outputElement.innerText = 'Running...';
     
@@ -100,10 +104,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Correctly access the output field from the response
+                    // If code execution is successful, display the output
                     outputElement.innerText = data.data.output;
                 } else {
-                    // Display the error message from the response
+                    // If code execution failed, display the error message
                     outputElement.innerText = `Error: ${data.data}`;
                 }
             })
@@ -113,10 +117,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-    
-    
-    
-    
     
 
     // Save Code Button Logic
@@ -262,3 +262,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+function saveCodeSilently(code,tutorialId) {
+    if (!code) {
+        console.error('No code to save.');
+        return;
+    }
+
+    // Save user progress using AJAX without showing the "Saving..." message
+    fetch(ajax_object.ajax_url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: new URLSearchParams({
+            action: 'save_user_code',
+            tutorial_id: tutorialId,
+            code: code
+        }).toString()
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.success) {
+            console.error('Failed to save progress:', data.data);
+        }
+    })
+    .catch(error => {
+        console.error('Error during silent save request:', error);
+    });
+}
+
+
+
