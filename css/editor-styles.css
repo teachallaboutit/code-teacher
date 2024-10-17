@@ -29,13 +29,11 @@
     gap: 20px;
     height: 400px;
 }
-#editor-container, #output-container {
-    flex: 1;
-    height: 100%;
-}
+
 #editor-container, #output-container {
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 .container-header {
     font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif;

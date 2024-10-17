@@ -9,6 +9,27 @@ Author: Holly Billinghurst
 // Register shortcode to embed the Python editor
 defined('ABSPATH') or die("You can't access this file directly.");
 
+// Database tables to store saved user code
+register_activation_hook(__FILE__, 'create_code_editor_table');
+
+function create_code_editor_table() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'python_tutorials_code';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $sql = "CREATE TABLE $table_name (
+        id BIGINT(20) NOT NULL AUTO_INCREMENT,
+        user_id BIGINT(20) NOT NULL,
+        tutorial_id BIGINT(20) NOT NULL,
+        saved_code LONGTEXT NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE KEY user_tutorial (user_id, tutorial_id)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($sql);
+}
+
 function python_code_editor_enqueue_scripts() {
     // Enqueue CodeMirror CSS and JS
     wp_enqueue_style('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css');
@@ -44,12 +65,21 @@ function python_code_editor_shortcode($atts) {
     // Select the tutorial based on the attribute
     $tutorial = isset($tutorials[$atts['tutorial']]) ? $tutorials[$atts['tutorial']] : null;
 
-     // Get the current user ID
-     $user_id = get_current_user_id();
-     $tutorial_id = $atts['tutorial'];
- 
-     // Check if the user has saved progress
-     $saved_code = get_user_meta($user_id, 'python_editor_progress_' . $tutorial_id, true);
+    // Get the current user ID
+    $user_id = get_current_user_id();
+    $tutorial_id = intval($atts['tutorial']);
+
+    // Check if the user has saved progress
+    global $wpdb;
+    $saved_code = '';
+    if ($user_id) {
+        $table_name = $wpdb->prefix . 'python_tutorials_code';
+        $row = $wpdb->get_row(
+            $wpdb->prepare("SELECT saved_code FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
+        );
+
+        $saved_code = $row ? $row->saved_code : '';
+    }
 
     // Prepare tutorial content
     $title_text = $tutorial ? $tutorial['title'] : '';
@@ -64,38 +94,37 @@ function python_code_editor_shortcode($atts) {
     // Editor HTML
     ob_start(); // Start output buffering
     ?>
-    <div class = "code-teacher-container">
-    <div class="challenge-text"><h2><?php echo esc_attr($title_text ); ?></h2><p><?php echo esc_html($challenge_text); ?></p></div>
-    <div class="editor-panel">
-    <div class="editor-container">
-        <div id="editor-container">
-            <div class="container-header">Your Python Code</div>
-            <div id="editor" class="CodeMirror" data-tutorial-id="<?php echo esc_attr($tutorial_id); ?>" data-tutorial-code="<?php echo esc_attr($initial_code); ?>"></div>
+    <div class="code-teacher-container">
+        <div class="challenge-text"><h2><?php echo esc_attr($title_text); ?></h2><br/><?php echo $challenge_text; ?></div>
+        <div class="editor-panel">
+            <div class="editor-container">
+                <div id="editor-container">
+                    <div class="container-header">Your Python Code</div>
+                    <div id="editor" data-tutorial-id="<?php echo esc_attr($tutorial_id); ?>" data-tutorial-code="<?php echo esc_html($initial_code); ?>"></div>
+                </div>
+                <div id="output-container">
+                    <div class="container-header">Your Code Output</div>
+                    <pre id="output"></pre>
+                </div>
+            </div>
+            <div id="editor-controls">
+                <button id="run-code">Run Code</button>
+                <button id="save-code">Save Progress</button>
+                <button id="hint-button">Hint</button>
+                <button id="help-button">Help</button>
+                <div id="hint-section" style="display: none;"><strong>Hint:</strong> <?php echo $hint_text; ?></div>
+                
+            </div>
+            <div id="output-section">
+                <img id="helper-character" src="<?php echo esc_url(plugins_url('img/Alex_Chat_Bot.png', __FILE__)); ?>" alt="Alex Help Character" style="display: none;">
+                <div id="speech-bubble">Hi, it looks like you need help with your code...</div>
+            </div>
         </div>
-        <div id="output-container">
-            <div class="container-header">Your Code Output</div>
-            <pre id="output"></pre>
-        </div>
-    </div>
-    
-    <div id="editor-controls">
-        <button id="run-code">Run Code</button>
-        <button id="save-code">Save Progress</button>
-        <button id="hint-button">Hint</button>
-        <button id="help-button">Help</button>
-        <div id="hint-section" style="display: none;"><strong>Hint:</strong> <?php echo esc_html($hint_text); ?></div>
-    </div>
-    <div id="output-section">
-        <img id="helper-character" src="<?php echo esc_url(plugins_url('img/Alex_Chat_Bot.png', __FILE__)); ?>" alt="Alex Help Character" style="display: none;">
-        <div id="speech-bubble">Hi, it looks like you need help with your code...</div>
-    </div>
-</div>
     </div>
     <?php
     return ob_get_clean(); // Return the buffered content
 }
 add_shortcode('python_editor', 'python_code_editor_shortcode');
-
 
 // Handle AJAX request to execute code
 function python_code_editor_execute_code() {
@@ -131,57 +160,6 @@ function python_code_editor_execute_code() {
 }
 add_action('wp_ajax_execute_code', 'python_code_editor_execute_code');
 add_action('wp_ajax_nopriv_execute_code', 'python_code_editor_execute_code');
-
-// Add admin menu for ChatGPT API settings  - Added in V1.2
-function python_code_editor_admin_menu() {
-    add_menu_page(
-        'Python Code Teacher Settings',
-        'Python Teacher Settings',
-        'manage_options',
-        'python-code-editor-settings',
-        'python_code_editor_settings_page',
-        'dashicons-admin-generic',
-        81
-    );
-}
-add_action('admin_menu', 'python_code_editor_admin_menu');
-
-// Settings page content
-function python_code_editor_settings_page() {
-    // Save settings if form is submitted
-    if (isset($_POST['submit'])) {
-        check_admin_referer('python_code_editor_settings');
-        $api_key = sanitize_text_field($_POST['chatgpt_api_key']);
-        update_option('python_code_editor_chatgpt_api_key', $api_key);
-        echo '<div class="updated"><p>Settings saved.</p></div>';
-    }
-
-    // Get the current API key
-    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
-    ?>
-    <div class="wrap">
-        <h1>Python Code Editor Settings</h1>
-        <form method="post" action="">
-            <?php wp_nonce_field('python_code_editor_settings'); ?>
-            <table class="form-table">
-                <tr valign="top">
-                    <th scope="row">ChatGPT API Key</th>
-                    <td><input type="text" name="chatgpt_api_key" value="<?php echo esc_attr($api_key); ?>" style="width: 400px;"></td>
-                </tr>
-            </table>
-            <p>To use ChatGPT integration, you need an API key. Please follow these steps:</p>
-            <ol>
-                <li>Visit the <a href="https://platform.openai.com/signup" target="_blank">OpenAI Platform</a> and create an account if you don't already have one.</li>
-                <li>After logging in, go to the <a href="https://platform.openai.com/account/api-keys" target="_blank">API Keys</a> section.</li>
-                <li>Click on "Create new secret key" to generate a new API key.</li>
-                <li>Copy the generated key and paste it into the field above.</li>
-                <li>Click "Save Changes" to save your key securely.</li>
-            </ol>
-            <?php submit_button(); ?>
-        </form>
-    </div>
-    <?php
-}
 
 // Handle AJAX request to get help from ChatGPT
 function python_code_editor_get_chatgpt_help() {
@@ -239,42 +217,70 @@ function python_code_editor_get_chatgpt_help() {
         wp_send_json_error('Unexpected response format from the API. Please check logs for more details.');
     }
 }
-
-
 add_action('wp_ajax_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
 add_action('wp_ajax_nopriv_get_chatgpt_help', 'python_code_editor_get_chatgpt_help');
 
+// Saving User Progress
+function save_user_code() {
+    global $wpdb;
 
-// -------------- Saving User Progress -------------------------
-
-// Handle AJAX request to save user progress
-function python_code_editor_save_progress() {
-    // Ensure the user is logged in
-    if (!is_user_logged_in()) {
-        wp_send_json_error('User not logged in.');
-    }
-
-    // Get current user ID
+    // Get user ID and tutorial ID from the AJAX request
     $user_id = get_current_user_id();
-    $tutorial_id = isset($_POST['tutorial_id']) ? sanitize_text_field($_POST['tutorial_id']) : '';
-    $code = isset($_POST['code']) ? sanitize_textarea_field($_POST['code']) : '';
+    $tutorial_id = intval($_POST['tutorial_id']);
+    $saved_code = wp_unslash($_POST['code']); // stops the backslashes appearing when loaded
 
-    // Debugging: Log received data only in the logs
-    if (empty($tutorial_id) || empty($code)) {
-        error_log('Save Progress Error: tutorial_id is ' . $tutorial_id . ', code length is ' . strlen($code));
+
+    if (!$user_id) {
+        wp_send_json_error('User not logged in.');
+        return;
     }
 
-    // Save the progress as user meta data
-    if (!empty($tutorial_id) && !empty($code)) {
-        update_user_meta($user_id, 'python_editor_progress_' . $tutorial_id, $code);
-        wp_send_json_success('Progress saved successfully.');
+    $table_name = $wpdb->prefix . 'python_tutorials_code';
+
+    // Insert or update the saved code
+    $wpdb->replace(
+        $table_name,
+        array(
+            'user_id' => $user_id,
+            'tutorial_id' => $tutorial_id,
+            'saved_code' => $saved_code,
+        ),
+        array(
+            '%d', // user_id
+            '%d', // tutorial_id
+            '%s'  // saved_code
+        )
+    );
+
+    wp_send_json_success('Code saved successfully.');
+}
+add_action('wp_ajax_save_user_code', 'save_user_code');
+
+function load_python_code_function() {
+    // Load the saved code from the database if it exists
+
+    $user_id = get_current_user_id();
+    $tutorial_id = intval($_POST['tutorial_id']);
+    
+    if (!$user_id) {
+        wp_send_json_error('User not logged in.');
+        return;
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'python_tutorials_code';
+    $row = $wpdb->get_row(
+        $wpdb->prepare("SELECT saved_code FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
+    );
+
+    // Set your skeleton code, which can vary depending on the tutorial.
+    $skeleton_code = "print('Hello, World!')"; // Example skeleton code
+
+    if ($row) {
+        wp_send_json_success(['code' => htmlspecialchars_decode($row->saved_code)]); // removes the backslashes from the saved code
     } else {
-        wp_send_json_error('Invalid data. Tutorial ID: ' . $tutorial_id . ', Code Length: ' . strlen($code));
+        wp_send_json_error(['code' => $skeleton_code]);
     }
 }
-add_action('wp_ajax_save_python_progress', 'python_code_editor_save_progress');
-
-
-
-
+add_action('wp_ajax_load_python_code', 'load_python_code_function');
 ?>
