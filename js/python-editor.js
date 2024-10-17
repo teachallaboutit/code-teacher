@@ -59,10 +59,21 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => response.json())
         .then(data => {
-            if (data.success && data.code) {
-                editor.setValue(data.code);
-            } else if (data.data && data.data.code) {
-                // Load skeleton code if no saved code found
+            if (data.success) {
+                if (typeof data.data.code === 'string') {
+                    editor.setValue(data.data.code);
+                } else {
+                    console.error('Code is not valid, setting to skeleton.');
+                    editor.setValue("print('Hello, World!')");
+                }
+                console.log('Is Complete Field Found:', data.data.is_complete);
+                console.log('Json: ', data)
+                if (data.data.is_complete) {
+                    document.getElementById('challenge-completed').style.display = 'block';
+                } else {
+                    document.getElementById('challenge-completed').style.display = 'none';
+                }
+            } else if (data.data && typeof data.data.code === 'string') {
                 editor.setValue(data.data.code);
             } else {
                 console.error('Failed to load code:', data);
@@ -76,44 +87,50 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-
     if (runButton && editor && outputElement) {
         runButton.addEventListener('click', function () {
             const code = editor.getValue().trim();
-    
+
             if (!code) {
                 outputElement.innerText = 'Please enter some code to execute.';
                 return;
             }
-    
-            // Save the code silently before executing
-            saveCodeSilently(code,tutorialId);
-    
+
             outputElement.innerText = 'Running...';
-    
+
+            // Call the ChatGPT Evaluation API
             fetch(ajax_object.ajax_url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                 },
                 body: new URLSearchParams({
-                    action: 'execute_code',
+                    action: 'evaluate_code',
+                    tutorial_id: tutorialId,
                     code: code
                 }).toString()
             })
             .then(response => response.json())
             .then(data => {
-                if (data.success) {
-                    // If code execution is successful, display the output
-                    outputElement.innerText = data.data.output;
+                console.log('Challenge evaluation considers code as:', data.data.is_complete);
+                console.log('Json on run: ', data)
+                if (data.success && data.data.is_complete) {
+                    // If the challenge is complete, save it with completion status
+                    console.log('Challenge is Complete Setting:', tutorialId, 'as true');
+                    saveCodeSilently(code, tutorialId, true); // Save code and mark as completed
+
+                    // Show the completed image under the editor
+                    document.getElementById('challenge-completed').style.display = 'block';
+                    
                 } else {
-                    // If code execution failed, display the error message
-                    outputElement.innerText = `Error: ${data.data}`;
+                    // Proceed with code execution & save the code with completed as false
+                    saveCodeSilently(code, tutorialId, false);
+                    executeCode(code, outputElement);
                 }
             })
             .catch(error => {
-                console.error('Error during AJAX request:', error);
-                outputElement.innerText = 'Error executing code. Please try again.';
+                console.error('Error during ChatGPT evaluation request:', error);
+                executeCode(code, outputElement); // Fallback to execute code if the evaluation fails
             });
         });
     }
@@ -263,13 +280,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-function saveCodeSilently(code,tutorialId) {
+function saveCodeSilently(code,tutorialId,is_complete) {
     if (!code) {
         console.error('No code to save.');
         return;
     }
 
     // Save user progress using AJAX without showing the "Saving..." message
+    console.log('Challenge is Complete Setting:'+ tutorialId + " as " + is_complete);
+
     fetch(ajax_object.ajax_url, {
         method: 'POST',
         headers: {
@@ -278,7 +297,9 @@ function saveCodeSilently(code,tutorialId) {
         body: new URLSearchParams({
             action: 'save_user_code',
             tutorial_id: tutorialId,
-            code: code
+            code: code,
+            is_complete: is_complete ? 1 : 0
+
         }).toString()
     })
     .then(response => {
@@ -298,4 +319,31 @@ function saveCodeSilently(code,tutorialId) {
 }
 
 
+function executeCode(code, outputElement) {
+    outputElement.innerText = 'Running...';
 
+    fetch(ajax_object.ajax_url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        },
+        body: new URLSearchParams({
+            action: 'execute_code',
+            code: code
+        }).toString()
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // If code execution is successful, display the output
+            outputElement.innerText = data.data.output;
+        } else {
+            // If code execution failed, display the error message
+            outputElement.innerText = `Error: ${data.data}`;
+        }
+    })
+    .catch(error => {
+        console.error('Error during AJAX request:', error);
+        outputElement.innerText = 'Error executing code. Please try again.';
+    });
+}

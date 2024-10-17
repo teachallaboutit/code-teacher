@@ -17,18 +17,36 @@ function create_code_editor_table() {
     $table_name = $wpdb->prefix . 'python_tutorials_code';
     $charset_collate = $wpdb->get_charset_collate();
 
-    $sql = "CREATE TABLE $table_name (
-        id BIGINT(20) NOT NULL AUTO_INCREMENT,
-        user_id BIGINT(20) NOT NULL,
-        tutorial_id BIGINT(20) NOT NULL,
-        saved_code LONGTEXT NOT NULL,
-        PRIMARY KEY (id),
-        UNIQUE KEY user_tutorial (user_id, tutorial_id)
-    ) $charset_collate;";
-
+    // Create or alter the table
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-    dbDelta($sql);
+
+    // Check if table exists
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name;
+
+    if (!$table_exists) {
+        // Create the table if it doesn't exist
+        $sql = "CREATE TABLE $table_name (
+            id BIGINT(20) NOT NULL AUTO_INCREMENT,
+            user_id BIGINT(20) NOT NULL,
+            tutorial_id BIGINT(20) NOT NULL,
+            saved_code LONGTEXT NOT NULL,
+            is_complete TINYINT(1) NOT NULL DEFAULT 0,
+            PRIMARY KEY (id),
+            UNIQUE KEY user_tutorial (user_id, tutorial_id)
+        ) $charset_collate;";
+        
+        dbDelta($sql);
+    } else {
+        // If the table exists, ensure it has the 'is_complete' column
+        $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'is_complete'");
+
+        if (empty($columns)) {
+            // Add 'is_complete' column if it doesn't exist
+            $wpdb->query("ALTER TABLE $table_name ADD is_complete TINYINT(1) NOT NULL DEFAULT 0");
+        }
+    }
 }
+
 
 function python_code_editor_enqueue_scripts() {
     // Enqueue CodeMirror CSS and JS
@@ -75,10 +93,11 @@ function python_code_editor_shortcode($atts) {
     if ($user_id) {
         $table_name = $wpdb->prefix . 'python_tutorials_code';
         $row = $wpdb->get_row(
-            $wpdb->prepare("SELECT saved_code FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
+            $wpdb->prepare("SELECT saved_code, is_complete FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
         );
 
         $saved_code = $row ? $row->saved_code : '';
+        $is_complete = $row ? $row->is_complete : false;
     }
 
     // Prepare tutorial content
@@ -99,8 +118,13 @@ function python_code_editor_shortcode($atts) {
         <div class="editor-panel">
             <div class="editor-container">
                 <div id="editor-container">
-                    <div class="container-header">Your Python Code</div>
+                    <div class="container-header">Your Python Code <?php echo $is_complete; ?></div>
                     <div id="editor" data-tutorial-id="<?php echo esc_attr($tutorial_id); ?>" data-tutorial-code="<?php echo esc_html($initial_code); ?>"></div>
+                  
+                <div id="challenge-completed" style="display:none;">
+                    <img src="<?php echo esc_url(plugins_url('img/complete.png', __FILE__)); ?>" alt="Challenge Completed" width="200px" <?php if(!$is_complete){ echo 'style="display:none";';} ?> >
+                </div>
+           
                 </div>
                 <div id="output-container">
                     <div class="container-header">Your Code Output</div>
@@ -228,6 +252,7 @@ function save_user_code() {
     $user_id = get_current_user_id();
     $tutorial_id = intval($_POST['tutorial_id']);
     $saved_code = wp_unslash($_POST['code']); // stops the backslashes appearing when loaded
+    $is_complete = isset($_POST['is_complete']) ? intval($_POST['is_complete']) : 0;
 
 
     if (!$user_id) {
@@ -244,11 +269,13 @@ function save_user_code() {
             'user_id' => $user_id,
             'tutorial_id' => $tutorial_id,
             'saved_code' => $saved_code,
+            'is_complete' => $is_complete
         ),
         array(
             '%d', // user_id
             '%d', // tutorial_id
-            '%s'  // saved_code
+            '%s',  // saved_code
+            '%d'  // is_complete
         )
     );
 
@@ -263,24 +290,102 @@ function load_python_code_function() {
     $tutorial_id = intval($_POST['tutorial_id']);
     
     if (!$user_id) {
-        wp_send_json_error('User not logged in.');
+        wp_send_json_error(['code' => '', 'is_complete' => 0, 'message' => 'User not logged in.']);
         return;
     }
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'python_tutorials_code';
     $row = $wpdb->get_row(
-        $wpdb->prepare("SELECT saved_code FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
+        $wpdb->prepare("SELECT saved_code, is_complete FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
     );
 
     // Set your skeleton code, which can vary depending on the tutorial.
     $skeleton_code = "print('Hello, World!')"; // Example skeleton code
 
     if ($row) {
-        wp_send_json_success(['code' => htmlspecialchars_decode($row->saved_code)]); // removes the backslashes from the saved code
+        wp_send_json_success(['code' => $row->saved_code, 'is_complete' => $row->is_complete]);
     } else {
-        wp_send_json_error(['code' => $skeleton_code]);
+        wp_send_json_success(['code' => $skeleton_code, 'is_complete' => 0]);
     }
 }
+
+
 add_action('wp_ajax_load_python_code', 'load_python_code_function');
+
+
+
+function python_code_editor_evaluate_code() {
+    // Get the API key from settings
+    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
+    if (empty($api_key)) {
+        wp_send_json_error('API key not set.');
+    }
+
+    // Get the data from the request
+    $tutorial_id = intval($_POST['tutorial_id']);
+    $student_code = isset($_POST['code']) ? sanitize_textarea_field($_POST['code']) : '';
+
+    if (empty($student_code)) {
+        wp_send_json_error('Student code is required.');
+    }
+
+    // Include tutorial content
+    include plugin_dir_path(__FILE__) . 'tutorials.php';
+    $tutorial = isset($tutorials[$tutorial_id]) ? $tutorials[$tutorial_id] : null;
+
+    if (!$tutorial) {
+        wp_send_json_error('Invalid tutorial ID.');
+    }
+
+    $challenge = $tutorial['challenge'];
+    $example_answer = $tutorial['example_answer'];
+
+    // Prepare the prompt for ChatGPT
+    $prompt = "This is a Python code challenge that has been set for kids aged 12 to 14: " . $challenge .
+              "\nStudent's code: " . $student_code .
+              "\nExample answer: " . $example_answer .
+              "\nPlease show the word 'true' if all criteria have been met, and 'false' if there are still parts of the programming challenge to complete.";
+
+    // Call ChatGPT API with GPT-4 model
+    $api_url = 'https://api.openai.com/v1/chat/completions';
+    $response = wp_remote_post($api_url, array(
+        'headers' => array(
+            'Content-Type' => 'application/json',
+            'Authorization' => 'Bearer ' . $api_key,
+        ),
+        'body'    => json_encode(array(
+            'model' => 'gpt-4',
+            'messages' => array(
+                array('role' => 'system', 'content' => 'You are a helpful tutor.'),
+                array('role' => 'user', 'content' => $prompt)
+            ),
+            'max_tokens' => 10,
+            'temperature' => 0.0,
+        )),
+        'method'  => 'POST'
+    ));
+
+    if (is_wp_error($response)) {
+        wp_send_json_error('Failed to contact the API: ' . $response->get_error_message());
+    }
+
+    $response_body = wp_remote_retrieve_body($response);
+    $data = json_decode($response_body, true);
+
+    // Determine if the challenge is complete
+    $is_complete = false;
+    if (isset($data['choices'][0]['message']['content'])) {
+        $evaluation_result = trim($data['choices'][0]['message']['content']);
+        $is_complete = (strtolower($evaluation_result) === 'true');
+    }
+
+    // Return the result to JavaScript
+    wp_send_json_success(['is_complete' => $is_complete]);
+}
+add_action('wp_ajax_evaluate_code', 'python_code_editor_evaluate_code');
+add_action('wp_ajax_nopriv_evaluate_code', 'python_code_editor_evaluate_code');
+
+
+
 ?>
