@@ -1,16 +1,29 @@
-document.addEventListener('DOMContentLoaded', function () {
+(function (fn) {
+    if (document.readyState !== 'loading') {
+        // The DOM is already ready, just call the function directly
+        console.log('DOM in use calling function');
+        fn();
+    } else {
+        // Wait for the DOM to be fully loaded
+        console.log('DOM not in use - adding EventListener');
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+})(function () {
     let editor;
     const editorElement = document.getElementById('editor');
     const runButton = document.getElementById('run-code');
     const saveButton = document.getElementById('save-code');
     const helpButton = document.getElementById('help-button');
     const hintButton = document.getElementById('hint-button');
+    const resetButton = document.getElementById('reset-code');
     const helperCharacter = document.getElementById('helper-character');
     const speechBubble = document.getElementById('speech-bubble');
     const hintSection = document.getElementById('hint-section');
     const outputElement = document.getElementById('output');
     const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
     const tutorialId = editorElement.dataset.tutorialId; // Correct dataset to represent tutorial ID
+    const skeletonCode = editorElement.dataset.tutorialCode.replace(/\\n/g, '\n');
+  
 
     // List of waiting messages
     const waitingMessages = [
@@ -38,12 +51,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize CodeMirror editor
     if (editorElement && typeof CodeMirror !== 'undefined') {
-        const initialCode = editorElement.dataset.tutorialCode || "print('Hello, World!')";
         editor = CodeMirror(editorElement, {
             mode: 'python',
             lineNumbers: true,
             theme: 'default',
-            value: initialCode
+            value: skeletonCode
         });
 
         // Fetch saved code via an AJAX request if needed
@@ -60,11 +72,11 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                if (typeof data.data.code === 'string') {
+                if (typeof data.data.code === 'string' && data.data.code !="") {
                     editor.setValue(data.data.code);
                 } else {
-                    console.error('Code is not valid, setting to skeleton.');
-                    editor.setValue("print('Hello, World!')");
+                    console.log('Saved code is not valid or empty, setting to skeleton.');
+                    editor.setValue(skeletonCode);
                 }
                 console.log('Is Complete Field Found:', data.data.is_complete);
                 console.log('Json: ', data)
@@ -132,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error('Error during ChatGPT evaluation request:', error);
                 executeCode(code, outputElement); // Fallback to execute code if the evaluation fails
             });
-        });
+        }, { passive: true });
     }
     
 
@@ -195,11 +207,49 @@ document.addEventListener('DOMContentLoaded', function () {
                     helperCharacter.style.display = 'none';
                 }, 3000);
             });
-        });
+        }, { passive: true });
     }
 
-     // Help Button Logic
-     if (helpButton && editor && speechBubble && helperCharacter) {
+    if (resetButton && editor) {
+        resetButton.addEventListener('click', function () {
+            if (confirm('Are you sure you want to reset your progress? This action cannot be undone.')) {
+                // Reset user progress using AJAX
+                fetch(ajax_object.ajax_url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                    body: new URLSearchParams({
+                        action: 'reset_user_code',
+                        tutorial_id: tutorialId
+                    }).toString()
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        editor.setValue(skeletonCode);
+                        document.getElementById('challenge-completed').style.display = 'none';
+                        alert('Your progress has been reset.');
+                    } else {
+                        console.error('Failed to reset progress:', data.data);
+                        alert('Failed to reset progress. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during reset progress request:', error);
+                    alert('Error resetting progress. Please try again.');
+                });
+            }
+        }, { passive: true });
+    }
+
+    // Help Button Logic
+    if (helpButton && editor && speechBubble && helperCharacter) {
         helpButton.addEventListener('click', function () {
             const studentCode = editor.getValue().trim();
             const exampleAnswer = editorElement.dataset.tutorialCode;
@@ -253,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 helperCharacter.style.display = 'block';
                 helpButton.innerText = 'Hide Help';
             }
-        });
+        }, { passive: true });
     }
 
     // Hint Button Logic
@@ -276,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 helperCharacter.style.display = 'block';
                 hintButton.innerText = 'Hide Hint';
             }
-        });
+        }, { passive: true });
     }
 });
 

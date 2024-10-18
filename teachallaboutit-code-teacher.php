@@ -48,6 +48,59 @@ function create_code_editor_table() {
 }
 
 
+// Add admin menu for ChatGPT API settings  - Added in V1.2
+function python_code_editor_admin_menu() {
+    add_menu_page(
+        'Python Code Teacher Settings',
+        'Python Teacher Settings',
+        'manage_options',
+        'python-code-editor-settings',
+        'python_code_editor_settings_page',
+        'dashicons-admin-generic',
+        81
+    );
+}
+add_action('admin_menu', 'python_code_editor_admin_menu');
+
+// Settings page content
+function python_code_editor_settings_page() {
+    // Save settings if form is submitted
+    if (isset($_POST['submit'])) {
+        check_admin_referer('python_code_editor_settings');
+        $api_key = sanitize_text_field($_POST['chatgpt_api_key']);
+        update_option('python_code_editor_chatgpt_api_key', $api_key);
+        echo '<div class="updated"><p>Settings saved.</p></div>';
+    }
+
+    // Get the current API key
+    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
+    ?>
+    <div class="wrap">
+        <h1>Python Code Editor Settings</h1>
+        <form method="post" action="">
+            <?php wp_nonce_field('python_code_editor_settings'); ?>
+            <table class="form-table">
+                <tr valign="top">
+                    <th scope="row">ChatGPT API Key</th>
+                    <td><input type="text" name="chatgpt_api_key" value="<?php echo esc_attr($api_key); ?>" style="width: 400px;"></td>
+                </tr>
+            </table>
+            <p>To use ChatGPT integration, you need an API key. Please follow these steps:</p>
+            <ol>
+                <li>Visit the <a href="https://platform.openai.com/signup" target="_blank">OpenAI Platform</a> and create an account if you don't already have one.</li>
+                <li>After logging in, go to the <a href="https://platform.openai.com/account/api-keys" target="_blank">API Keys</a> section.</li>
+                <li>Click on "Create new secret key" to generate a new API key.</li>
+                <li>Copy the generated key and paste it into the field above.</li>
+                <li>Click "Save Changes" to save your key securely.</li>
+            </ol>
+            <?php submit_button(); ?>
+        </form>
+    </div>
+    <?php
+}
+
+
+
 function python_code_editor_enqueue_scripts() {
     // Enqueue CodeMirror CSS and JS
     wp_enqueue_style('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css');
@@ -118,7 +171,7 @@ function python_code_editor_shortcode($atts) {
         <div class="editor-panel">
             <div class="editor-container">
                 <div id="editor-container">
-                    <div class="container-header">Your Python Code <?php echo $is_complete; ?></div>
+                    <div class="container-header">Your Python Code</div>
                     <div id="editor" data-tutorial-id="<?php echo esc_attr($tutorial_id); ?>" data-tutorial-code="<?php echo esc_html($initial_code); ?>"></div>
                   
                 <div id="challenge-completed" style="display:none;">
@@ -136,6 +189,7 @@ function python_code_editor_shortcode($atts) {
                 <button id="save-code">Save Progress</button>
                 <button id="hint-button">Hint</button>
                 <button id="help-button">Help</button>
+                <button id="reset-code">Reset Code</button>
                 <div id="hint-section" style="display: none;"><strong>Hint:</strong> <?php echo $hint_text; ?></div>
                 
             </div>
@@ -283,11 +337,20 @@ function save_user_code() {
 }
 add_action('wp_ajax_save_user_code', 'save_user_code');
 
+
 function load_python_code_function() {
     // Load the saved code from the database if it exists
 
     $user_id = get_current_user_id();
     $tutorial_id = intval($_POST['tutorial_id']);
+    
+    // Include tutorial content from an external file
+    include plugin_dir_path(__FILE__) . 'tutorials.php';
+
+    // Select the tutorial based on the attribute
+    $tutorial = isset($tutorials[$atts['tutorial']]) ? $tutorials[$atts['tutorial']] : null;
+    $skeleton_code = $tutorial ? $tutorial['skeleton_code'] : '';
+
     
     if (!$user_id) {
         wp_send_json_error(['code' => '', 'is_complete' => 0, 'message' => 'User not logged in.']);
@@ -300,9 +363,6 @@ function load_python_code_function() {
         $wpdb->prepare("SELECT saved_code, is_complete FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
     );
 
-    // Set your skeleton code, which can vary depending on the tutorial.
-    $skeleton_code = "print('Hello, World!')"; // Example skeleton code
-
     if ($row) {
         wp_send_json_success(['code' => $row->saved_code, 'is_complete' => $row->is_complete]);
     } else {
@@ -312,6 +372,42 @@ function load_python_code_function() {
 
 
 add_action('wp_ajax_load_python_code', 'load_python_code_function');
+
+
+// Handle AJAX request to reset user code
+function reset_user_code() {
+    // Get user ID and tutorial ID from the AJAX request
+    $user_id = get_current_user_id();
+    $tutorial_id = intval($_POST['tutorial_id']);
+
+    if (!$user_id) {
+        wp_send_json_error('User not logged in.');
+        return;
+    }
+
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'python_tutorials_code';
+
+    // Delete the saved code for the given user and tutorial
+    $result = $wpdb->delete(
+        $table_name,
+        array(
+            'user_id' => $user_id,
+            'tutorial_id' => $tutorial_id,
+        ),
+        array(
+            '%d',
+            '%d'
+        )
+    );
+
+    if ($result !== false) {
+        wp_send_json_success('Code reset successfully.');
+    } else {
+        wp_send_json_error('Failed to reset code.');
+    }
+}
+add_action('wp_ajax_reset_user_code', 'reset_user_code');
 
 
 

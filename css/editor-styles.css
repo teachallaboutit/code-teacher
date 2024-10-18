@@ -23,11 +23,15 @@
     width: 100%;
 }
 
+
 .editor-container {
     display: flex;
     flex-direction: row;
     gap: 20px;
     height: 400px;
+    min-height: 400px; /* Set to match the height of the output container */
+    height: 100%; /* Ensure the container grows to match the output container */
+    overflow: hidden; /* Remove scroll bars */
 }
 
 #editor-container, #output-container {
@@ -51,7 +55,10 @@
     border: 2px solid #97BAFF;
     border-radius: 0 0 10px 10px;
     height: 100%;
+    min-height: 400px; /* Set this to match the editor-container and output container */
+    overflow: hidden; /* Remove scroll bars */
 }
+
 #output-container {
     border: 2px solid #97BAFF;
     border-radius: 10px;
@@ -60,6 +67,7 @@
     font-size: 16px;
     background-color: #001f3f;
     height: 100%;
+    min-height: 400px; /* Adjust this height to be consistent */
 }
 
 
@@ -135,6 +143,20 @@
     color: black;
 }
 #hint-button:hover {
+    background-color: #fc956d;
+}
+
+#reset-code {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    background-color: #ffbba1;
+    color: black;
+    font-style: italic;
+}
+#reset-code:hover {
     background-color: #fc956d;
 }
 

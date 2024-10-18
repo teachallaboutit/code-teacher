@@ -23,6 +23,14 @@ $tutorials = array(
         'example_answer' => 'number = 10\nprint(number)\nprint(number - 5)',
         'hint' => '<p>When you store a variable in python that\'s a number, you can add the calculation to the variable.</p>Make the computer so the hard work for you!</p>',
         'unit_test' => "10\n5\n" 
+    ),
+    array(
+        'title' => 'Using a For Loop',
+        'challenge' => '<p>Create a loop that prints the numbers from 1 to 5, each on a new line.</p><p>Use a <code>for</code> loop to iterate through these numbers and print them out to the screen.</p>',
+        'skeleton_code' => 'for i in range():\n    print()',
+        'example_answer' => 'for i in range(1, 6):\n    print(i)',
+        'hint' => '<p>In Python, you can use the <code>range()</code> function to create a sequence of numbers. For example, <code>range(1, 6)</code> will generate numbers from 1 to 5.</p>Remember that <code>range()</code> starts at the first number and stops just before the second number you provide.</p>',
+        'unit_test' => "1\n2\n3\n4\n5\n"
     )
 );
 ?>
