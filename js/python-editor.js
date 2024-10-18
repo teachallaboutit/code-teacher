@@ -23,6 +23,7 @@
     const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
     const tutorialId = editorElement.dataset.tutorialId; // Correct dataset to represent tutorial ID
     const skeletonCode = editorElement.dataset.tutorialCode.replace(/\\n/g, '\n');
+    const unitTest = document.getElementById('unit-test');
   
 
     // List of waiting messages
@@ -110,6 +111,8 @@
 
             outputElement.innerText = 'Running...';
 
+            if (unitTest.innerText == "AI"){
+
             // Call the ChatGPT Evaluation API
             fetch(ajax_object.ajax_url, {
                 method: 'POST',
@@ -137,13 +140,20 @@
                 } else {
                     // Proceed with code execution & save the code with completed as false
                     saveCodeSilently(code, tutorialId, false);
-                    executeCode(code, outputElement);
+                    executeCode(code, outputElement,true,tutorialId);
                 }
             })
             .catch(error => {
                 console.error('Error during ChatGPT evaluation request:', error);
-                executeCode(code, outputElement); // Fallback to execute code if the evaluation fails
+                executeCode(code, outputElement,true,tutorialId); // Fallback to execute code if the evaluation fails
             });
+        } else{
+            console.log('Evaluating against unit test');
+            executeCode(code, outputElement, false,tutorialId); // Execute the code first
+            
+            
+
+        }
         }, { passive: true });
     }
     
@@ -369,7 +379,7 @@ function saveCodeSilently(code,tutorialId,is_complete) {
 }
 
 
-function executeCode(code, outputElement) {
+function executeCode(code, outputElement, isTested, tutorialId) {
     outputElement.innerText = 'Running...';
 
     fetch(ajax_object.ajax_url, {
@@ -387,6 +397,22 @@ function executeCode(code, outputElement) {
         if (data.success) {
             // If code execution is successful, display the output
             outputElement.innerText = data.data.output;
+
+            // Now that we have the output, perform the unit test comparison
+            if (!isTested) {
+                const unitTest = document.getElementById('unit-test');
+
+                if (unitTest && unitTest.innerText.trim() === outputElement.innerText.trim()) {
+                    console.log('Challenge is Complete Setting:', tutorialId, 'as true');
+                    saveCodeSilently(code, tutorialId, true); // Save code and mark as completed
+                    // Show the completed image under the editor
+                    document.getElementById('challenge-completed').style.display = 'block';
+                } else {
+                    console.log('Challenge is Incomplete Setting:', tutorialId, 'as false');
+                    console.log('Unit test is:', unitTest.innerText, 'output is:', outputElement.innerText);
+                    saveCodeSilently(code, tutorialId, false); // Save code and mark as not completed
+                }
+            }
         } else {
             // If code execution failed, display the error message
             outputElement.innerText = `Error: ${data.data}`;
@@ -397,3 +423,4 @@ function executeCode(code, outputElement) {
         outputElement.innerText = 'Error executing code. Please try again.';
     });
 }
+

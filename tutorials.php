@@ -31,6 +31,14 @@ $tutorials = array(
         'example_answer' => 'for i in range(1, 6):\n    print(i)',
         'hint' => '<p>In Python, you can use the <code>range()</code> function to create a sequence of numbers. For example, <code>range(1, 6)</code> will generate numbers from 1 to 5.</p>Remember that <code>range()</code> starts at the first number and stops just before the second number you provide.</p>',
         'unit_test' => "1\n2\n3\n4\n5\n"
+    ),
+    array(
+        'title' => 'Introduction to While Loops',
+        'challenge' => '<p>Create a <code>while</code> loop that prints the numbers from 1 to 5, each on a new line. <i>This should have the same output as the FOR loop code challenge, but uses a different code statement.</i></p><p>Use the <code>while</code> loop to keep printing until the condition is no longer met.</p>',
+        'skeleton_code' => 'i = 1\nwhile i <= 5:\n    print()\n    i += 1',
+        'example_answer' => 'i = 1\nwhile i <= 5:\n    print(i)\n    i += 1',
+        'hint' => '<p>In a <code>while</code> loop, you need to set an initial value and define a condition that keeps the loop running.</p><p>For example, start with <code>i = 1</code>, and use <code>while i <= 5</code> to keep printing until <code>i</code> becomes greater than 5. Don’t forget to increase <code>i</code> each time!</p>',
+        'unit_test' => "1\n2\n3\n4\n5\n"
     )
 );
 ?>

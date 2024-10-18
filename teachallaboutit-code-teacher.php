@@ -159,6 +159,7 @@ function python_code_editor_shortcode($atts) {
     $skeleton_code = $tutorial ? $tutorial['skeleton_code'] : '';
     $example_answer = $tutorial ? $tutorial['example_answer'] : '';
     $hint_text = $tutorial ? $tutorial['hint'] : '';
+    $unit_test = $tutorial ? $tutorial['unit_test'] : '';
 
     // Determine the initial code to load (if previously saved, student code loads, otherwise skeleton code will load)
     $initial_code = !empty($saved_code) ? $saved_code : $skeleton_code;
@@ -191,6 +192,7 @@ function python_code_editor_shortcode($atts) {
                 <button id="help-button">Help</button>
                 <button id="reset-code">Reset Code</button>
                 <div id="hint-section" style="display: none;"><strong>Hint:</strong> <?php echo $hint_text; ?></div>
+                <div id="unit-test" style="display: none;"><?php echo $unit_test; ?></div>
                 
             </div>
             <div id="output-section">
@@ -412,11 +414,6 @@ add_action('wp_ajax_reset_user_code', 'reset_user_code');
 
 
 function python_code_editor_evaluate_code() {
-    // Get the API key from settings
-    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
-    if (empty($api_key)) {
-        wp_send_json_error('API key not set.');
-    }
 
     // Get the data from the request
     $tutorial_id = intval($_POST['tutorial_id']);
@@ -425,6 +422,15 @@ function python_code_editor_evaluate_code() {
     if (empty($student_code)) {
         wp_send_json_error('Student code is required.');
     }
+
+
+    // Get the API key from settings
+    $api_key = get_option('python_code_editor_chatgpt_api_key', '');
+    if (empty($api_key)) {
+        wp_send_json_error('API key not set.');
+    }
+
+    
 
     // Include tutorial content
     include plugin_dir_path(__FILE__) . 'tutorials.php';
