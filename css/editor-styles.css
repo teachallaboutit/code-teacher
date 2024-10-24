@@ -219,3 +219,70 @@
     bottom: -15px;
     right: 30px;
 }
+
+
+/* ======================   Report Table Styling ========================= */
+
+
+#teacher-report-table_wrapper {
+    display: block !important; /* Override the display: flex; with display: block */
+    width: 100%; /* Ensure the wrapper takes full width */
+    padding: 20px; /* Add padding to create space around the table */
+    box-sizing: border-box; /* Ensure padding is included in the width */
+}
+
+.teacher-report-table {
+    width: 100% !important;
+    border-collapse: collapse;
+    border: 2px solid #ca8e76;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    display: table !important;
+}
+.teacher-report-table th {
+    background-color: #bccef1;
+    border: 2px solid #ca8e76;
+    padding: 10px;
+    color: #000000;
+    font-size: 120%;
+    text-align: center;
+    display: table-cell !important;
+}
+.teacher-report-table td {
+    border: 2px solid #ca8e76;
+    padding: 10px;
+    color: #302f2b;
+    text-align: center; 
+    display: table-cell !important;
+}
+.teacher-report-table tr:nth-child(even) {
+    background-color: #fffcd4;
+}
+.teacher-report-table tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+/* Style Completed Column - Green Background */
+#teacher-report-table td.completed-yes {
+    background-color: #cbf7dc !important; /* Green color for completed cells */
+    display: table-cell !important;
+}
+
+/* Button styling for DataTables */
+.dt-buttons {
+    margin-bottom: 10px; /* Add margin to create space between buttons and table */
+    display: block !important; /* Ensure buttons are not using flex */
+}
+
+/* Style Filter Columns Button */
+.dt-button {
+    padding: 5px 10px;
+    background-color: #ca8e76;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dt-button:hover {
+    background-color: #b16e5a;
+}

@@ -1,16 +1,91 @@
 <?php
 /*
 Plugin Name: TeachAllAboutIt - SEN Friendly Code Teacher for Python
+Plugin URI: https://teachAllAboutIt.uk/plugins
 Description: An embeddable Python code editor to help students learn Python, with hints and SEN-friendly features.
-Version: 1.1
+Version: 1.1.0
 Author: Holly Billinghurst
+Author URI: https://teachAllAboutIt.uk/plugins
+License: GPL2
+
+// Changelog:
+// Version 1.1.0
+// - On screen Python Editor.
+// - Code save feature with timestamp for teacher reports
+// - chatGPT helper feature to analyse code currently on
+// - Updated UI for the teacher report page.
+// Version 1.0.0
+// - Initial release.
 */
+
 
 // Register shortcode to embed the Python editor
 defined('ABSPATH') or die("You can't access this file directly.");
 
+
+
 // Database tables to store saved user code
 register_activation_hook(__FILE__, 'create_code_editor_table');
+
+function python_code_editor_enqueue_scripts() {
+    // Enqueue CodeMirror CSS and JS
+    wp_enqueue_style('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css');
+    wp_enqueue_script('codemirror-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js', array(), null, true);
+    wp_enqueue_script('codemirror-python-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js', array('codemirror-js'), null, true);
+
+    global $post;
+    
+    // teacher_report_tables.js & other code is only loaded where the report shortcode is used
+    if (has_shortcode($post->post_content, 'python_editor_teacher_report')) {
+        // Enqueue DataTables CSS and JS for sorting & jquery for updates
+        wp_enqueue_script('jquery');
+        wp_enqueue_style('datatables-css', 'https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css');
+        wp_enqueue_script('datatables-js', 'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js', array('jquery'), null, true);
+
+        // Enqueue Buttons extension for DataTables
+        wp_enqueue_script('datatables-buttons-js', 'https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js', array('datatables-js'), null, true);
+        wp_enqueue_script('datatables-buttons-html5-js', 'https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js', array('datatables-buttons-js'), null, true);
+        wp_enqueue_script('datatables-buttons-colvis-js', 'https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js', array('datatables-buttons-js'), null, true);
+        wp_enqueue_style('datatables-buttons-css', 'https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css');
+
+        // Enqueue the custom teacher report script
+        //wp_enqueue_script('teacher-report-tables', plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js', array('jquery', 'datatables-js', 'datatables-buttons-js'), null, true);
+    }
+
+    // Enqueue custom CSS and JavaScript for plugin functionality
+    wp_enqueue_style('python-editor-css', plugin_dir_url(__FILE__) . 'css/editor-styles.css');
+
+    // python-editor.js is only needed on pages where there is a python editor
+    if (has_shortcode($post->post_content, 'python_editor')) {
+        wp_enqueue_script(
+            'python-editor-js',
+            plugin_dir_url(__FILE__) . 'js/python-editor.js',
+            array('codemirror-js', 'codemirror-python-js'),
+            filemtime(plugin_dir_path(__FILE__) . 'js/python-editor.js'), // Use file modification time as version
+            true
+        );
+    }
+
+    // Pass Ajax URL to JavaScript
+    wp_localize_script('python-editor-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+}
+add_action('wp_enqueue_scripts', 'python_code_editor_enqueue_scripts');
+
+
+
+
+// Include the admin report file
+require_once(plugin_dir_path(__FILE__) . 'admin-reports.php');
+
+
+// Register shortcode for the Python editor
+function register_python_editor_shortcode() {
+    add_shortcode('python_editor', 'python_code_editor_shortcode');
+}
+add_action('init', 'register_python_editor_shortcode');
+
+
+
 
 function create_code_editor_table() {
     global $wpdb;
@@ -31,15 +106,22 @@ function create_code_editor_table() {
             tutorial_id BIGINT(20) NOT NULL,
             saved_code LONGTEXT NOT NULL,
             is_complete TINYINT(1) NOT NULL DEFAULT 0,
+            last_saved datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
             PRIMARY KEY (id),
             UNIQUE KEY user_tutorial (user_id, tutorial_id)
         ) $charset_collate;";
         
         dbDelta($sql);
     } else {
+        // If the table exists, ensure it has the 'last_saved' column
+        $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'last_saved'");
+        if (empty($columns)) {
+            // Add 'last_saved' column if it doesn't exist
+            $wpdb->query("ALTER TABLE $table_name ADD last_saved datetime DEFAULT CURRENT_TIMESTAMP NOT NULL");
+        }
+
         // If the table exists, ensure it has the 'is_complete' column
         $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name LIKE 'is_complete'");
-
         if (empty($columns)) {
             // Add 'is_complete' column if it doesn't exist
             $wpdb->query("ALTER TABLE $table_name ADD is_complete TINYINT(1) NOT NULL DEFAULT 0");
@@ -48,7 +130,8 @@ function create_code_editor_table() {
 }
 
 
-// Add admin menu for ChatGPT API settings  - Added in V1.2
+// Add admin menu for ChatGPT API settings
+add_action('admin_menu', 'python_code_editor_admin_menu');
 function python_code_editor_admin_menu() {
     add_menu_page(
         'Python Code Teacher Settings',
@@ -60,7 +143,9 @@ function python_code_editor_admin_menu() {
         81
     );
 }
-add_action('admin_menu', 'python_code_editor_admin_menu');
+
+
+
 
 // Settings page content
 function python_code_editor_settings_page() {
@@ -101,25 +186,9 @@ function python_code_editor_settings_page() {
 
 
 
-function python_code_editor_enqueue_scripts() {
-    // Enqueue CodeMirror CSS and JS
-    wp_enqueue_style('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css');
-    wp_enqueue_script('codemirror-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js', array(), null, true);
-    wp_enqueue_script('codemirror-python-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js', array('codemirror-js'), null, true);
-    // Enqueue custom CSS and JavaScript for plugin functionality
-    wp_enqueue_style('python-editor-css', plugin_dir_url(__FILE__) . 'css/editor-styles.css');
-    wp_enqueue_script(
-        'python-editor-js',
-        plugin_dir_url(__FILE__) . 'js/python-editor.js',
-        array('codemirror-js', 'codemirror-python-js'),
-        filemtime(plugin_dir_path(__FILE__) . 'js/python-editor.js'), // Use file modification time as version
-        true
-    );
 
-    // Pass Ajax URL to JavaScript
-    wp_localize_script('python-editor-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
-}
-add_action('wp_enqueue_scripts', 'python_code_editor_enqueue_scripts');
+
+
 
 function python_code_editor_shortcode($atts) {
     // Extract shortcode attributes
@@ -209,7 +278,9 @@ function python_code_editor_shortcode($atts) {
     <?php
     return ob_get_clean(); // Return the buffered content
 }
-add_shortcode('python_editor', 'python_code_editor_shortcode');
+
+
+
 
 // Handle AJAX request to execute code
 function python_code_editor_execute_code() {
@@ -330,13 +401,15 @@ function save_user_code() {
             'user_id' => $user_id,
             'tutorial_id' => $tutorial_id,
             'saved_code' => $saved_code,
-            'is_complete' => $is_complete
+            'is_complete' => $is_complete,
+            'last_saved' => current_time('mysql') // current datetime
         ),
         array(
             '%d', // user_id
             '%d', // tutorial_id
             '%s',  // saved_code
-            '%d'  // is_complete
+            '%d',  // is_complete
+            '%s'  // last_saved
         )
     );
 
