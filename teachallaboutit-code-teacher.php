@@ -167,6 +167,10 @@ function python_code_editor_shortcode($atts) {
     // Editor HTML
     ob_start(); // Start output buffering
     ?>
+    <div class="beta-container">
+    <p><i>Alex & Jordan's Code Tutor feature is currently in Beta. As it's still being tested (and some extra features added), you may see some unexpected behaviour. If you do, please let me know by reporting errors <a href="https://forms.gle/VXaBkNSF2Gvv1TGAA" target="_blank">using this form</a>.</i></p>
+    <p><i>Currently, the code tutor does not allow the use of input() - all data must be hard coded into your program.</i></p>
+    </div>
     <div class="code-teacher-container">
         <div class="challenge-text"><h2><?php echo esc_attr($title_text); ?></h2><br/><?php echo $challenge_text; ?></div>
         <div class="editor-panel">
@@ -175,7 +179,8 @@ function python_code_editor_shortcode($atts) {
                     <div class="container-header">Your Python Code</div>
                     <div id="editor" data-tutorial-id="<?php echo esc_attr($tutorial_id); ?>" data-tutorial-code="<?php echo esc_html($initial_code); ?>"></div>
                   
-                <div id="challenge-completed" style="display:none;">
+                <div id="challenge-completed">
+                    <!-- display none won't render when style is changed -->
                     <img src="<?php echo esc_url(plugins_url('img/complete.png', __FILE__)); ?>" alt="Challenge Completed" width="200px" <?php if(!$is_complete){ echo 'style="display:none";';} ?> >
                 </div>
            
@@ -274,7 +279,7 @@ function python_code_editor_get_chatgpt_help() {
                 array('role' => 'system', 'content' => 'You are a helpful tutor.'),
                 array('role' => 'user', 'content' => $prompt)
             ),
-            'max_tokens' => 40,
+            'max_tokens' => 100,
             'temperature' => 0.7,
         )),
         'method'  => 'POST'

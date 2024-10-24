@@ -302,12 +302,12 @@
                         if (data.success) {
                             speechBubble.innerText = data.data;
                         } else {
-                            speechBubble.innerText = 'Error: ' + (data.data || 'Unable to retrieve help at this moment.');
+                            speechBubble.innerText = "Whoops! It looks like I can't think of any help right now. Please save your code before reloading. If you keep seeing this, please report an error.";
                         }
                     })
                     .catch(error => {
                         console.error('Error during ChatGPT AJAX request:', error);
-                        speechBubble.innerText = 'Error connecting to help service.';
+                        speechBubble.innerText = "Whoops! There's been an error connecting to the help service. Please resport this error if you keep seeing it.";
                     });
                 }
                 helperCharacter.style.display = 'block';
@@ -401,16 +401,34 @@ function executeCode(code, outputElement, isTested, tutorialId) {
             // Now that we have the output, perform the unit test comparison
             if (!isTested) {
                 const unitTest = document.getElementById('unit-test');
+                const challengeCompletedElement = document.getElementById('challenge-completed');
 
-                if (unitTest && unitTest.innerText.trim() === outputElement.innerText.trim()) {
+                if (unitTest && normalizeString(unitTest.innerText) === normalizeString(outputElement.innerText)) {
                     console.log('Challenge is Complete Setting:', tutorialId, 'as true');
                     saveCodeSilently(code, tutorialId, true); // Save code and mark as completed
                     // Show the completed image under the editor
-                    document.getElementById('challenge-completed').style.display = 'block';
+                    if (challengeCompletedElement) {
+                        console.log('Showing completed image...');
+                        // Force a repaint to ensure visibility
+                        challengeCompletedElement.style.display = 'none'; 
+                        setTimeout(() => {
+                            challengeCompletedElement.style.display = 'block';
+                            const completedImage = challengeCompletedElement.querySelector('img');
+                            if (completedImage) {
+                                completedImage.style.display = 'block';
+                            }
+                        }, 10);
+                    }
+                    
                 } else {
                     console.log('Challenge is Incomplete Setting:', tutorialId, 'as false');
-                    console.log('Unit test is:', unitTest.innerText, 'output is:', outputElement.innerText);
+                    console.log('Unit test is:', normalizeString(unitTest.innerText), 'output is:', normalizeString(outputElement.innerText));
                     saveCodeSilently(code, tutorialId, false); // Save code and mark as not completed
+                    // Hide the completed image if the challenge is not complete
+                    if (challengeCompletedElement) {
+                        console.log('Hiding completed image...');
+                        challengeCompletedElement.style.display = 'none';
+                    }
                 }
             }
         } else {
@@ -422,5 +440,13 @@ function executeCode(code, outputElement, isTested, tutorialId) {
         console.error('Error during AJAX request:', error);
         outputElement.innerText = 'Error executing code. Please try again.';
     });
+}
+
+
+function normalizeString(str) {
+    return str
+        .replace(/\\n/g, '\n')  // Replace literal \n with actual newline character
+        .replace(/\r?\n|\r/g, '\n')  // Standardize all line breaks to \n
+        .trim();  // Remove any leading or trailing whitespace
 }
 
