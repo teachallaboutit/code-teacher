@@ -42,7 +42,7 @@ $tutorials = array(
     ),
     array(
         'title' => 'Using If-Else Statements',
-        'challenge' => '<p>Create a variable called <code>score</code> that stores an integer value.</p><p>Write an <code>if</code> statement that checks if the <code>score</code> is at least 50.</p><p>If it is, print "You passed!". Otherwise, print "You failed!".</p>',
+        'challenge' => '<p>Create a variable called <code>score</code> that stores the integer value 41.</p><p>Write an <code>if</code> statement that checks if the <code>score</code> is at least 50.</p><p>If it is, print "You passed!". Otherwise, print "You failed!".</p>',
         'skeleton_code' => 'score = \nif score >= 50:\n    print()\nelse:\n    print()',
         'example_answer' => 'score = 40\nif score >= 50:\n    print("You passed!")\nelse:\n    print("You failed!")',
         'hint' => '<p>Use the greater than or equal to symbol (<code>>=</code>) to check if the score is at least 50.</p>',
@@ -50,7 +50,7 @@ $tutorials = array(
     ),
     array(
         'title' => 'Using If-Else Statements With Strings',
-        'challenge' => '<p>Create a variable called <code>day</code> that stores the name of a day of the week.</p><p>Write an <code>if-else</code> statement that prints "Weekend!" if <code>day</code> is either "Saturday" or "Sunday". Otherwise, print "Weekday!".</p>',
+        'challenge' => '<p>Create a variable called <code>day</code> that stores the name of a day of the week and set this to "Monday".</p><p>Write an <code>if-else</code> statement that prints "Weekend!" if <code>day</code> is either "Saturday" or "Sunday". Otherwise, print "Weekday!".</p>',
         'skeleton_code' => 'day = ""\nif day == "Saturday" or day == "Sunday":\n    print()\nelse:\n    print()',
         'example_answer' => 'day = "Monday"\nif day == "Saturday" or day == "Sunday":\n    print("Weekend!")\nelse:\n    print("Weekday!")',
         'hint' => '<p>Use <code>or</code> to combine multiple conditions in the <code>if</code> statement.</p>',
@@ -67,7 +67,7 @@ $tutorials = array(
     array(
         'title' => 'Introduction to While Loops',
         'challenge' => '<p>Create a <code>while</code> loop that prints the numbers from 1 to 5, each on a new line. <i>This should have the same output as the FOR loop code challenge, but uses a different code statement.</i></p><p>Use the <code>while</code> loop to keep printing until the condition is no longer met.</p>',
-        'skeleton_code' => 'i = 1\nwhile i <= 5:\n    print()\n    i += 1',
+        'skeleton_code' => 'i = 1\nwhile:\n    print()\n    i += 1',
         'example_answer' => 'i = 1\nwhile i <= 5:\n    print(i)\n    i += 1',
         'hint' => '<p>In a <code>while</code> loop, you need to set an initial value and define a condition that keeps the loop running.</p><p>For example, start with <code>i = 1</code>, and use <code>while i <= 5</code> to keep printing until <code>i</code> becomes greater than 5. Don’t forget to increase <code>i</code> each time!</p>',
         'unit_test' => "1\n2\n3\n4\n5\n"
@@ -90,7 +90,7 @@ $tutorials = array(
     ),
     array(
         'title' => 'Nested For Loops',
-        'challenge' => '<p>Create a nested <code>for</code> loop to display a 3x3 grid of stars.</p><p>The outer loop should iterate 3 times, and for each iteration, the inner loop should also iterate 3 times to print a line of 3 stars.</p>',
+        'challenge' => '<p>Create a nested <code>for</code> loop to display a 3x3 grid of stars.</p><p>The outer loop should iterate 3 times, and for each iteration, the inner loop should also iterate 3 times to print a line of 3 stars.</p><p><i>Hint: Using <code>end = " "</code> will stop the print from putting a new line at the end of a print (usually, print will put a new line automatically).</i></p>',
         'skeleton_code' => 'for i in range():\n    for j in range():\n        print("*", end=" ")\n    print()',
         'example_answer' => 'for i in range(3):\n    for j in range(3):\n        print("*", end=" ")\n    print()',
         'hint' => '<p>Use <code>end=" "</code> to prevent each star from printing on a new line. Use <code>print()</code> after the inner loop to move to the next line.</p>',
@@ -154,7 +154,7 @@ $tutorials = array(
     ),
     array(
         'title' => 'Using ASCII and Plain Text in Python',
-        'challenge' => '<p>Create a variable called <code>character</code> that stores any single character.</p><p>Use the <code>ord()</code> function to get the ASCII value of the character and print it.</p><p>Then, use the <code>chr()</code> function to convert the ASCII value back to the character and print the result.</p>',
+        'challenge' => '<p>Create a variable called <code>character</code> that stores the single character "A" (it is important that this is a capital!).</p><p>Use the <code>ord()</code> function to get the ASCII value of the character and print it.</p><p>Then, use the <code>chr()</code> function to convert the ASCII value back to the character and print the result.</p>',
         'skeleton_code' => 'character = ""\nascii_value = ord(character)\nprint()\noriginal_character = chr(ascii_value)\nprint()',
         'example_answer' => 'character = "A"\nascii_value = ord(character)\nprint(ascii_value)\noriginal_character = chr(ascii_value)\nprint(original_character)',
         'hint' => '<p>Use <code>ord()</code> to convert a character to its ASCII value, and <code>chr()</code> to convert an ASCII value back to a character.</p>',
@@ -649,6 +649,19 @@ $tutorials = array(
         'example_answer' => 'price = 100.00  # Example price\n\ndef calculate_discounted_price(price, discount_percentage):\n    discount = price * (discount_percentage / 100)\n    new_price = price - discount\n    return round(new_price, 2)\n\n# Calculate and print the discounted price\nnew_price = calculate_discounted_price(price, discount_percentage)\nprint("Original price: £" + str(price))\nprint("Discount percentage: " + str(discount_percentage) + "%")\nprint("New price after discount: £" + str(new_price))',
         'hint' => '<p>To calculate the new price, multiply the price by the discount percentage (divided by 100), subtract it from the original price, and round the result to two decimal places.</p><p>Remember to format the output exactly as specified in the challenge instructions.</p>',
         'unit_test' => 'Original price: £100.0\nDiscount percentage: 10%\nNew price after discount: £90.0'
+    ),
+    array(
+        'title' => 'Linear Search on an Array of Objects',
+        'challenge' => '<p>Create a class that performs a linear search on an array of objects. Each object should have properties for <code>name</code> and <code>age</code>. Your task is to:</p>
+    <ul>
+    <li>Create an array of objects, where each object has a <code>name</code> and <code>age</code> property.</li>
+    <li>Write a function <code>search_by_name</code> that searches for an object by its <code>name</code> property and returns the <code>age</code> of the found object.</li>
+    <li>If the name is not found, return -1.</li>
+    </ul>',
+        'skeleton_code' => 'names = ["Alice", "Bob", "Charlie"]\nages=[30,25,35]\n\nclass Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\nclass LinearSearchObjects:\n    def __init__(self, people):\n        self.people = people\n\n    def search_by_name(self, target_name):\n        # Search for an object by name\n        pass',
+        'example_answer' => 'class Person:\n    def __init__(self, name, age):\n        self.name = name\n        self.age = age\n\nclass LinearSearchObjects:\n    def __init__(self, people):\n        self.people = people\n\n    def search_by_name(self, target_name):\n        for person in self.people:\n            if person.name == target_name:\n                return person.age\n        return -1\n\n# Example data\npeople = [Person("Alice", 30), Person("Bob", 25), Person("Charlie", 35)]\nsearch = LinearSearchObjects(people)\nprint(search.search_by_name("Bob"))  # Expected output: 25',
+        'hint' => '<p>Use a loop to iterate through each object in the array and compare the <code>name</code> property to the target name.</p>',
+        'unit_test' => '25\n-1'
     )
 
 );

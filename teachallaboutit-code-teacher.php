@@ -28,35 +28,16 @@ defined('ABSPATH') or die("You can't access this file directly.");
 register_activation_hook(__FILE__, 'create_code_editor_table');
 
 function python_code_editor_enqueue_scripts() {
-    // Enqueue CodeMirror CSS and JS
-    wp_enqueue_style('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css');
-    wp_enqueue_script('codemirror-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js', array(), null, true);
-    wp_enqueue_script('codemirror-python-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js', array('codemirror-js'), null, true);
-
     global $post;
-    
-    // teacher_report_tables.js & other code is only loaded where the report shortcode is used
-    if (has_shortcode($post->post_content, 'python_editor_teacher_report')) {
-        // Enqueue DataTables CSS and JS for sorting & jquery for updates
-        wp_enqueue_script('jquery');
-        wp_enqueue_style('datatables-css', 'https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css');
-        wp_enqueue_script('datatables-js', 'https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js', array('jquery'), null, true);
 
-        // Enqueue Buttons extension for DataTables
-        wp_enqueue_script('datatables-buttons-js', 'https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js', array('datatables-js'), null, true);
-        wp_enqueue_script('datatables-buttons-html5-js', 'https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js', array('datatables-buttons-js'), null, true);
-        wp_enqueue_script('datatables-buttons-colvis-js', 'https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js', array('datatables-buttons-js'), null, true);
-        wp_enqueue_style('datatables-buttons-css', 'https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css');
-
-        // Enqueue the custom teacher report script
-        //wp_enqueue_script('teacher-report-tables', plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js', array('jquery', 'datatables-js', 'datatables-buttons-js'), null, true);
-    }
-
-    // Enqueue custom CSS and JavaScript for plugin functionality
-    wp_enqueue_style('python-editor-css', plugin_dir_url(__FILE__) . 'css/editor-styles.css');
-
-    // python-editor.js is only needed on pages where there is a python editor
+    // Check if the current post content contains the `python_editor` shortcode
     if (has_shortcode($post->post_content, 'python_editor')) {
+        // Enqueue CodeMirror CSS and JS
+        wp_enqueue_style('codemirror-css', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css');
+        wp_enqueue_script('codemirror-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js', array(), null, true);
+        wp_enqueue_script('codemirror-python-js', 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/python/python.min.js', array('codemirror-js'), null, true);
+
+        // Enqueue the Python editor script
         wp_enqueue_script(
             'python-editor-js',
             plugin_dir_url(__FILE__) . 'js/python-editor.js',
@@ -64,12 +45,36 @@ function python_code_editor_enqueue_scripts() {
             filemtime(plugin_dir_path(__FILE__) . 'js/python-editor.js'), // Use file modification time as version
             true
         );
+
+        // Pass Ajax URL to python-editor.js
+        wp_localize_script('python-editor-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
     }
 
-    // Pass Ajax URL to JavaScript
-    wp_localize_script('python-editor-js', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+    // Check if the current post content contains the `python_editor_teacher_report` shortcode
+    if (has_shortcode($post->post_content, 'python_editor_teacher_report')) {
+        // Enqueue DataTables CSS and JS for sorting & jquery for updates
+        wp_enqueue_script('jquery');
+        wp_enqueue_style('datatables-css', 'https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css');
+        wp_enqueue_script('datatables-js', 'https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js', array('jquery'), null, true);
+
+        // Styling for tables
+        wp_enqueue_script('datatables-buttons-js', 'https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js', array('jquery', 'datatables-js'), null, true);
+        wp_enqueue_style('datatables-buttons-css', 'https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css');
+        wp_enqueue_script('datatables-buttons-html5-js', 'https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js', array('datatables-buttons-js'), null, true);
+        wp_enqueue_script('datatables-buttons-colvis-js', 'https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js', array('datatables-buttons-js'), null, true);
+
+        // Enqueue the teacher report script
+        wp_enqueue_script('teacher-report-tables', plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js', array('jquery', 'datatables-js', 'datatables-buttons-js'), null, true);
+
+        // Pass Ajax URL to teacher-report-tables.js
+        wp_localize_script('teacher-report-tables', 'ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+
+    // Enqueue custom CSS for the editor (shared across pages)
+    wp_enqueue_style('python-editor-css', plugin_dir_url(__FILE__) . 'css/editor-styles.css');
 }
 add_action('wp_enqueue_scripts', 'python_code_editor_enqueue_scripts');
+
 
 
 
@@ -238,7 +243,8 @@ function python_code_editor_shortcode($atts) {
     ?>
     <div class="beta-container">
     <p><i>Alex & Jordan's Code Tutor feature is currently in Beta. As it's still being tested (and some extra features added), you may see some unexpected behaviour. If you do, please let me know by reporting errors <a href="https://forms.gle/VXaBkNSF2Gvv1TGAA" target="_blank">using this form</a>.</i></p>
-    <p><i>Currently, the code tutor does not allow the use of input() - all data must be hard coded into your program.</i></p>
+    <p><i><strong>Currently, the code tutor does not allow the use of input() - all data must be hard coded into your program.</strong></i></p>
+    
     </div>
     <div class="code-teacher-container">
         <div class="challenge-text"><h2><?php echo esc_attr($title_text); ?></h2><br/><?php echo $challenge_text; ?></div>
@@ -285,10 +291,16 @@ function python_code_editor_shortcode($atts) {
 // Handle AJAX request to execute code
 function python_code_editor_execute_code() {
     // Get the posted code
-    $code = isset($_POST['code']) ? sanitize_textarea_field($_POST['code']) : '';
+    $code = isset($_POST['code']) ? wp_unslash($_POST['code']) : '';
 
-    if (empty($code)) {
-        wp_send_json_error('Code is required.');
+    // Ensure whitespace is properly preserved
+    $code = str_replace("\r\n", "\n", $code);
+    $code = htmlspecialchars_decode($code, ENT_NOQUOTES);
+
+    // Validate if the code is not empty
+    if (empty(trim($code))) {
+        wp_send_json_error(['message' => 'Code is required.']);
+        return;
     }
 
     // Flask endpoint (currently hardcoded for testing)
@@ -419,21 +431,26 @@ add_action('wp_ajax_save_user_code', 'save_user_code');
 
 
 function load_python_code_function() {
-    // Load the saved code from the database if it exists
-
+    // Get the current logged-in user ID
     $user_id = get_current_user_id();
-    $tutorial_id = intval($_POST['tutorial_id']);
-    
+    $tutorial_id = isset($_POST['tutorial_id']) ? intval($_POST['tutorial_id']) : null;
+
     // Include tutorial content from an external file
     include plugin_dir_path(__FILE__) . 'tutorials.php';
 
     // Select the tutorial based on the attribute
-    $tutorial = isset($tutorials[$atts['tutorial']]) ? $tutorials[$atts['tutorial']] : null;
+    $tutorial = isset($tutorials[$tutorial_id]) ? $tutorials[$tutorial_id] : null;
     $skeleton_code = $tutorial ? $tutorial['skeleton_code'] : '';
-
     
+
     if (!$user_id) {
-        wp_send_json_error(['code' => '', 'is_complete' => 0, 'message' => 'User not logged in.']);
+        wp_send_json_error(['message' => 'Invalid request. User ID missing.']);
+        return;
+    }
+
+    // Allow tutorial_id to be 0 (for the welcome tutorial)
+    if ($tutorial_id === null || $tutorial_id === '') {
+        wp_send_json_error(['message' => 'Invalid request. Tutorial ID missing.']);
         return;
     }
 
@@ -450,8 +467,9 @@ function load_python_code_function() {
     }
 }
 
-
 add_action('wp_ajax_load_python_code', 'load_python_code_function');
+
+
 
 
 // Handle AJAX request to reset user code

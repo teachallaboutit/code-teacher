@@ -67,30 +67,34 @@ function generate_teacher_report() {
                 </thead>
                 <tbody>';
 
-    foreach ($user_data as $data) {
-        $tutorial_id = $data['tutorial_id'];
-        $tutorial_title = isset($tutorials[$tutorial_id]['title']) ? $tutorials[$tutorial_id]['title'] : 'Unknown';
-
-        $output .= sprintf(
-            '<tr>
-                <td>%s</td>
-                <td>%s</td>
-                <td>%s</td>
-            </tr>',
-            esc_html($tutorial_title . '   (id=' . $tutorial_id . ')'),
-            esc_html($data['is_complete'] ? 'Yes' : 'No'),
-            esc_html($data['last_saved'] ? date('d/m/Y g:i A', strtotime($data['last_saved'])) : 'Not Saved')
-        );
-    }
-
-    $output .= '</tbody></table>';
-
-    // Add script to include teacher_report_tables.js
-    $output .= '<script type="text/javascript" src="' . plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js"></script>';
-
-    return $output;
-}
+                foreach ($user_data as $data) {
+                    $tutorial_id = $data['tutorial_id'];
+                    $tutorial_title = isset($tutorials[$tutorial_id]['title']) ? $tutorials[$tutorial_id]['title'] : 'Unknown';
+            
+                    $output .= sprintf(
+                        '<tr>
+                            <td><a href="#" class="expand-code-editor" data-tutorial-id="%d" data-user-id="%d">%s</a></td>
+                            <td>%s</td>
+                            <td>%s</td>
+                        </tr>',
+                        esc_attr($tutorial_id),
+                        esc_attr($selected_user),
+                        esc_html($tutorial_title . ' (id=' . $tutorial_id . ')'),
+                        esc_html($data['is_complete'] ? 'Yes' : 'No'),
+                        esc_html($data['last_saved'] ? date('d/m/Y g:i A', strtotime($data['last_saved'])) : 'Not Saved')
+                    );
+                }
+            
+                $output .= '</tbody></table>';
+            
+                // Add script to include teacher_report_tables.js
+                $output .= '<script type="text/javascript" src="' . plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js"></script>';
+            
+                return $output;
+            }
 
 // Add shortcode for admin view report
 add_shortcode('python_editor_teacher_report', 'generate_teacher_report');
+
+
 ?>

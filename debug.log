@@ -1,174 +1,0 @@
-[11-Oct-2024 15:17:34 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 136
-[11-Oct-2024 15:17:34 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 15:18:57 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 134
-[11-Oct-2024 15:18:57 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 15:20:04 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 134
-[11-Oct-2024 15:20:04 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 15:22:43 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 134
-[11-Oct-2024 15:22:43 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:01:50 UTC] PHP Parse error:  syntax error, unexpected 'Run' (T_STRING), expecting ';' or ',' in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 148
-[11-Oct-2024 16:01:50 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:16:39 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 165
-[11-Oct-2024 16:16:39 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:16:53 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 165
-[11-Oct-2024 16:16:53 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:17:54 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 165
-[11-Oct-2024 16:17:54 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:18:14 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[11-Oct-2024 16:18:14 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:18:54 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[11-Oct-2024 16:18:54 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:19:28 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[11-Oct-2024 16:19:28 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:19:35 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[11-Oct-2024 16:19:35 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:20:11 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 165
-[11-Oct-2024 16:20:11 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:20:28 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 165
-[11-Oct-2024 16:20:28 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:20:55 UTC] PHP Parse error:  syntax error, unexpected 'File' (T_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 165
-[11-Oct-2024 16:20:55 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[11-Oct-2024 16:25:12 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[11-Oct-2024 16:25:12 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 09:36:59 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 144
-[14-Oct-2024 09:36:59 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 09:46:22 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 141
-[14-Oct-2024 09:46:22 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 10:05:03 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 10:05:03 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:14:01 UTC] PHP Parse error:  syntax error, unexpected '?' in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 153
-[14-Oct-2024 11:14:01 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:15:27 UTC] PHP Parse error:  syntax error, unexpected '<' in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 153
-[14-Oct-2024 11:15:27 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:29:34 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 171
-[14-Oct-2024 11:29:34 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:29:39 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 171
-[14-Oct-2024 11:29:39 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:33:01 UTC] PHP Parse error:  syntax error, unexpected '$tutorial_code' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 171
-[14-Oct-2024 11:33:01 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:51:21 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[14-Oct-2024 11:51:21 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:52:32 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 140
-[14-Oct-2024 11:52:32 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:57:25 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 11:57:25 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 11:57:31 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 11:57:31 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:00:08 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:00:08 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:00:57 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:00:57 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:02:04 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:02:04 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:02:28 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:02:28 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:31:26 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:31:26 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:31:34 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:31:34 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:46:13 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:46:13 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:48:07 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:48:07 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:48:14 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:48:14 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 12:48:19 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 142
-[14-Oct-2024 12:48:19 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:07:34 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:07:34 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:08:15 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:08:15 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:08:19 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:08:19 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:08:26 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:08:26 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:10:16 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:10:16 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:10:37 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:10:37 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:28:06 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:28:06 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:28:08 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:28:08 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:28:25 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:28:25 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:29:03 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:29:03 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:29:21 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:29:21 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:29:22 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:29:22 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:30:26 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:30:26 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:31:22 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:31:22 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:31:22 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:31:22 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:32:27 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:32:27 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:33:23 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:33:23 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:33:23 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:33:23 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:34:28 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:34:28 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:35:24 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:35:24 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:35:24 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:35:24 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:35:33 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:35:33 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:36:29 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:36:29 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:37:25 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:37:25 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:37:26 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:37:26 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:38:30 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:38:30 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:39:04 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:39:04 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:39:26 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:39:26 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:39:27 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:39:27 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:40:31 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:40:31 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:41:27 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:41:27 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:41:28 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:41:28 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:42:32 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:42:32 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:42:49 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:42:49 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:42:55 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:42:55 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:43:28 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:43:28 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:43:29 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:43:29 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:44:33 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:44:33 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:45:29 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:45:29 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:45:30 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:45:30 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:46:34 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:46:34 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:47:30 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:47:30 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[14-Oct-2024 13:47:30 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[14-Oct-2024 13:47:30 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[15-Oct-2024 08:13:15 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[15-Oct-2024 08:13:15 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[15-Oct-2024 08:13:18 UTC] PHP Parse error:  syntax error, unexpected '";' (T_CONSTANT_ENCAPSED_STRING) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 149
-[15-Oct-2024 08:13:18 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[16-Oct-2024 13:04:48 UTC] PHP Parse error:  syntax error, unexpected ')', expecting ']' in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 56
-[16-Oct-2024 13:04:48 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[16-Oct-2024 14:54:49 UTC] PHP Parse error:  syntax error, unexpected '$api_url' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 193
-[16-Oct-2024 14:54:49 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[16-Oct-2024 14:55:19 UTC] PHP Parse error:  syntax error, unexpected '$api_url' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 193
-[16-Oct-2024 14:55:19 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0
-[16-Oct-2024 14:56:05 UTC] PHP Parse error:  syntax error, unexpected '$api_url' (T_VARIABLE) in /home/838808.cloudwaysapps.com/zqtfcfwhxq/public_html/wp-content/plugins/teachallaboutit-code-teacher/teachallaboutit-code-teacher.php on line 193
-[16-Oct-2024 14:56:05 UTC] PHP Fatal error:  Exception thrown without a stack frame in Unknown on line 0

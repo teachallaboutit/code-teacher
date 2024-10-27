@@ -67,5 +67,6 @@ Code Challenges with shortcode numbers:
 60  : Bubble Sort on Letters (A Level)
 61  : Insertion Sort with Iterations (A Level)
 62  : Programming Challenge 1 (GCSE) - Calculate a Discounted Price
+63  : Linear Search on an Array of Objects (A Level)
 
 
