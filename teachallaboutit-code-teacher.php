@@ -91,7 +91,6 @@ add_action('init', 'register_python_editor_shortcode');
 
 
 
-
 function create_code_editor_table() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'python_tutorials_code';

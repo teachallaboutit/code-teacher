@@ -24,7 +24,9 @@
     const outputElement = document.getElementById('output');
     const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
     const unitTest = document.getElementById('unit-test');
+
     let tutorialId = null;
+    let skeletonCode = null;
 
 
     // List of waiting messages
@@ -62,7 +64,7 @@
             return;
         }
 
-        const skeletonCode = editorElement.dataset.tutorialCode.replace(/\\n/g, '\n');
+        skeletonCode = editorElement.dataset.tutorialCode.replace(/\\n/g, '\n');
 
         // Initialize CodeMirror editor
         if (typeof CodeMirror !== 'undefined') {
@@ -403,7 +405,7 @@ function executeCode(code, outputElement, isTested, tutorialId) {
     const formattedCode = normalizeCodeForExecution(code);
 
     console.log("Formatted Code Before Sending:", formattedCode);
-    
+
     fetch(ajax_object.ajax_url, {
         method: 'POST',
         headers: {

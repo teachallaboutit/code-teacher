@@ -286,3 +286,9 @@
 .dt-button:hover {
     background-color: #b16e5a;
 }
+
+
+.feedback-items{
+    text-align: left;
+    font-size: 12px;
+}
