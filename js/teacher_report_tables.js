@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             ],
             "createdRow": function (row, data, dataIndex) {
-                // If the "Completed" column (index 2) is "Yes", color the cell green
-                if (data[2] === 'Yes') {
+                // If the "Completed" column (index 1) is "Yes", color the cell green
+                if (data[1] === 'Yes') {
                     jQuery('td:eq(1)', row).css('background-color', '#cbf7dc');
                 }
             }
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if (editorRow.length) {
                 editorRow.remove();
             } else {
-                // Make an AJAX request to load saved code
+                // Make an AJAX request to load saved code and challenge
                 jQuery.ajax({
                     url: ajax_object.ajax_url,
                     method: 'POST',
@@ -52,16 +52,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     success: function (response) {
                         if (response.success) {
-                            // Add a new row to show the saved code
+                            // Add a new row to show the challenge and saved code
+                            const challengeHtml = `
+                                <div class="challenge-section">
+                                    <button class="toggle-challenge">Show Challenge</button>
+                                    <div class="challenge-content" style="display: none;">
+                                        ${response.data.challenge}
+                                    </div>
+                                </div>`;
+
                             const codeRowHtml = `
                                 <tr class="code-editor-row">
                                     <td colspan="3">
+                                        ${challengeHtml}
                                         <pre><code class="language-python">${response.data.code}</code></pre>
                                         <div class="feedback-section">
+                                            <br/>
                                             <h4>Provide Feedback</h4>
                                             <textarea class="feedback-input" rows="3" placeholder="Write your feedback here..."></textarea>
                                             <button class="submit-feedback" data-tutorial-id="${tutorialId}" data-user-id="${userId}">Submit Feedback</button>
                                             <div class="feedback-list">
+                                                <br/>
                                                 <h4>Previous Feedback:</h4>
                                                 <ul class="feedback-items"></ul>
                                             </div>
@@ -77,6 +88,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
                             // Load previous feedback if any
                             loadPreviousFeedback(tutorialId, userId, row.next('.code-editor-row').find('.feedback-items'));
+
+                            // Handle toggle of the challenge section
+                            jQuery('.toggle-challenge').off('click').on('click', function () {
+                                const challengeContent = jQuery(this).next('.challenge-content');
+                                if (challengeContent.is(':visible')) {
+                                    challengeContent.slideUp();
+                                    jQuery(this).text('Show Challenge');
+                                } else {
+                                    challengeContent.slideDown();
+                                    jQuery(this).text('Hide Challenge');
+                                }
+                            });
                         } else {
                             alert('Failed to load saved code.');
                         }
@@ -201,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.success) {
                     const feedbackItems = response.data.feedback;
                     feedbackItems.forEach(feedback => {
-                        feedbackListElement.append(`<li>${feedback.text} - <small>${feedback.date}</small> <a href="#" class="edit-feedback" data-feedback-id="${feedback.id}" data-tutorial-id="${tutorialId}" data-user-id="${userId}">Edit</a></li>`);
+                        feedbackListElement.append(`<li>${feedback.text} - <small>${feedback.date} <a href="#" class="edit-feedback" data-feedback-id="${feedback.id}" data-tutorial-id="${tutorialId}" data-user-id="${userId}">Edit</a></small></li>`);
                     });
                 }
             },

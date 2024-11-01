@@ -292,3 +292,19 @@
     text-align: left;
     font-size: 12px;
 }
+
+.challenge-content{
+    text-align: left;
+    font-size: 12px;
+}
+
+.challenge-content ul li code{
+    border: 0px;
+    padding: 0px;
+    display: inline;
+}
+
+.toggle-challenge, .submit-feedback{
+    background-color:#fcb295;
+    color: #000000;
+}

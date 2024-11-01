@@ -50,19 +50,39 @@ function generate_teacher_report() {
     // Include tutorial content from an external file
     include plugin_dir_path(__FILE__) . 'tutorials.php';
 
-    // Fetch all unique usernames with saved data
-    $users = $wpdb->get_results(
-        "SELECT DISTINCT user_id FROM $table_name",
-        ARRAY_A
-    );
+    // Fetch all unique user IDs from the saved data table
+    $user_ids = $wpdb->get_col("SELECT DISTINCT user_id FROM $table_name");
 
-    if (empty($users)) {
+    if (empty($user_ids)) {
         return "No user data available.";
     }
 
-    // Fetch user data to display
-    $selected_user = isset($_GET['user_id']) ? intval($_GET['user_id']) : $users[0]['user_id'];
-    $user_data = $wpdb->get_results(
+    // Fetch user data ordered by last name, then first name
+    $user_data = [];
+    foreach ($user_ids as $user_id) {
+        $user_info = get_userdata($user_id);
+        if ($user_info) {
+            $user_data[] = [
+                'user_id' => $user_id,
+                'first_name' => $user_info->user_firstname,
+                'last_name' => $user_info->user_lastname,
+                'username' => $user_info->user_login,
+            ];
+        }
+    }
+
+    // Sort users by last name, then first name
+    usort($user_data, function ($a, $b) {
+        $last_name_comparison = strcasecmp($a['last_name'], $b['last_name']);
+        if ($last_name_comparison === 0) {
+            return strcasecmp($a['first_name'], $b['first_name']);
+        }
+        return $last_name_comparison;
+    });
+
+    // Fetch data for the selected user
+    $selected_user = isset($_GET['user_id']) ? intval($_GET['user_id']) : $user_data[0]['user_id'];
+    $user_code_data = $wpdb->get_results(
         $wpdb->prepare(
             "SELECT tutorial_id, is_complete, last_saved FROM $table_name WHERE user_id = %d",
             $selected_user
@@ -71,22 +91,22 @@ function generate_teacher_report() {
     );
 
     // Get user information for the title
-    $user_info = get_userdata($selected_user);
-    $username = $user_info->user_firstname . ' ' . $user_info->user_lastname;
+    $selected_user_info = get_userdata($selected_user);
+    $username = $selected_user_info->user_firstname . ' ' . $selected_user_info->user_lastname;
 
     // Dropdown to select users
     $output = '<form method="GET" action="">
-                <label for="user_id">Select User:</label>
+                <label for="user_id">Select User to see their code:</label>
                 <select name="user_id" id="user_id" onchange="this.form.submit()">';
 
-    foreach ($users as $user) {
-        $user_info = get_userdata($user['user_id']);
+    foreach ($user_data as $user) {
         $selected = ($user['user_id'] == $selected_user) ? 'selected' : '';
+        $user_display_name = trim($user['first_name'] . ' ' . $user['last_name']);
         $output .= sprintf(
             '<option value="%d" %s>%s</option>',
             esc_attr($user['user_id']),
             esc_attr($selected),
-            esc_html($user_info->user_login)
+            esc_html($user_display_name)
         );
     }
 
@@ -105,31 +125,31 @@ function generate_teacher_report() {
                 </thead>
                 <tbody>';
 
-                foreach ($user_data as $data) {
-                    $tutorial_id = $data['tutorial_id'];
-                    $tutorial_title = isset($tutorials[$tutorial_id]['title']) ? $tutorials[$tutorial_id]['title'] : 'Unknown';
-            
-                    $output .= sprintf(
-                        '<tr>
-                            <td><a href="#" class="expand-code-editor" data-tutorial-id="%d" data-user-id="%d">%s</a></td>
-                            <td>%s</td>
-                            <td>%s</td>
-                        </tr>',
-                        esc_attr($tutorial_id),
-                        esc_attr($selected_user),
-                        esc_html($tutorial_title . ' (id=' . $tutorial_id . ')'),
-                        esc_html($data['is_complete'] ? 'Yes' : 'No'),
-                        esc_html($data['last_saved'] ? date('d/m/Y g:i A', strtotime($data['last_saved'])) : 'Not Saved')
-                    );
-                }
-            
-                $output .= '</tbody></table>';
-            
-                // Add script to include teacher_report_tables.js
-                $output .= '<script type="text/javascript" src="' . plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js"></script>';
-            
-                return $output;
-            }
+    foreach ($user_code_data as $data) {
+        $tutorial_id = $data['tutorial_id'];
+        $tutorial_title = isset($tutorials[$tutorial_id]['title']) ? $tutorials[$tutorial_id]['title'] : 'Unknown';
+
+        $output .= sprintf(
+            '<tr>
+                <td><a href="#" class="expand-code-editor" data-tutorial-id="%d" data-user-id="%d">%s</a></td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>',
+            esc_attr($tutorial_id),
+            esc_attr($selected_user),
+            esc_html($tutorial_title . ' (id=' . $tutorial_id . ')'),
+            esc_html($data['is_complete'] ? 'Yes' : 'No'),
+            esc_html($data['last_saved'] ? date('d/m/Y g:i A', strtotime($data['last_saved'])) : 'Not Saved')
+        );
+    }
+
+    $output .= '</tbody></table>';
+
+    // Add script to include teacher_report_tables.js
+    $output .= '<script type="text/javascript" src="' . plugin_dir_url(__FILE__) . 'js/teacher_report_tables.js"></script>';
+
+    return $output;
+}
 
 // Add shortcode for admin view report
 add_shortcode('python_editor_teacher_report', 'generate_teacher_report');
@@ -160,10 +180,15 @@ function load_student_python_code() {
         )
     );
 
+    // Include tutorial content
+    include plugin_dir_path(__FILE__) . 'tutorials.php';
+
+    $challenge_text = isset($tutorials[$tutorial_id]['challenge']) ? $tutorials[$tutorial_id]['challenge'] : 'Challenge details not found.';
+
     if ($row) {
-        wp_send_json_success(['code' => $row->saved_code]);
+        wp_send_json_success(['code' => $row->saved_code, 'challenge' => $challenge_text]);
     } else {
-        wp_send_json_error(['message' => 'No saved code found.']);
+        wp_send_json_success(['code' => '', 'challenge' => $challenge_text]);
     }
 }
 add_action('wp_ajax_load_student_python_code', 'load_student_python_code');
