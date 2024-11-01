@@ -3,12 +3,17 @@
 Plugin Name: TeachAllAboutIt - SEN Friendly Code Teacher for Python
 Plugin URI: https://teachAllAboutIt.uk/plugins
 Description: An embeddable Python code editor to help students learn Python, with hints and SEN-friendly features.
-Version: 1.1.0
+Version: 1.1.1
 Author: Holly Billinghurst
 Author URI: https://teachAllAboutIt.uk/plugins
 License: GPL2
 
 // Changelog:
+// Version 1.1.1
+// - Editable feedback from teachers.
+// - Access to chatGPT & python runtime as a subscription
+// - Visual updates for GUI
+// - Dashboard statistics for Administrators
 // Version 1.1.0
 // - On screen Python Editor.
 // - Code save feature with timestamp for teacher reports
@@ -26,6 +31,33 @@ defined('ABSPATH') or die("You can't access this file directly.");
 
 // Database tables to store saved user code
 register_activation_hook(__FILE__, 'create_code_editor_table');
+register_activation_hook(__FILE__, 'create_subscription_and_counter_tables');
+
+
+// "Code Teacher" menu items
+add_action('admin_menu', 'python_code_teacher_combined_menu');
+function python_code_teacher_combined_menu() {
+    // Create main menu item "Code Teacher"
+    add_menu_page(
+        'TeachAllAboutIt Code Teacher', // page title
+        'TeachAllAboutIt Code Teacher', // menu title
+        'manage_options', // capability ('manage_options' means only administrators can see it)
+        'code-teacher', // menu slug
+        'python_code_teacher_stats_page', // Default to stats page when clicking main menu
+        'dashicons-learn-more', // menu icon
+        10  // overall position
+    );
+
+    // Add submenu for "API Settings" under "Code Teacher Dashboard"
+    add_submenu_page(
+        'code-teacher', // parent menu
+        'API Settings', // page title
+        'API Settings', // menu title
+        'manage_options', // capability
+        'python-code-editor-settings', // menu slug
+        'python_code_editor_settings_page' // function 
+    );
+}
 
 function python_code_editor_enqueue_scripts() {
     global $post;
@@ -133,19 +165,104 @@ function create_code_editor_table() {
     }
 }
 
+// Create database table for counters on activation
 
-// Add admin menu for ChatGPT API settings
-add_action('admin_menu', 'python_code_editor_admin_menu');
-function python_code_editor_admin_menu() {
-    add_menu_page(
-        'Python Code Teacher Settings',
-        'Python Teacher Settings',
-        'manage_options',
-        'python-code-editor-settings',
-        'python_code_editor_settings_page',
-        'dashicons-admin-generic',
-        81
+function create_subscription_and_counter_tables() {
+    global $wpdb;
+    
+    // Table to store user's subscription start date
+    $subscription_table = $wpdb->prefix . 'user_subscriptions';
+    $charset_collate = $wpdb->get_charset_collate();
+
+    $subscription_sql = "CREATE TABLE $subscription_table (
+        user_id BIGINT(20) NOT NULL,
+        subscription_start_date DATE NOT NULL,
+        PRIMARY KEY (user_id)
+    ) $charset_collate;";
+
+    // Table to track API usage counts
+    $counter_table = $wpdb->prefix . 'api_usage_counter';
+    $counter_sql = "CREATE TABLE $counter_table (
+        id BIGINT(20) NOT NULL AUTO_INCREMENT,
+        user_id BIGINT(20) NOT NULL,
+        api_name VARCHAR(255) NOT NULL,
+        count INT NOT NULL DEFAULT 0,
+        month_year VARCHAR(7) NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE KEY user_api_month (user_id, api_name, month_year)
+    ) $charset_collate;";
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    dbDelta($subscription_sql);
+    dbDelta($counter_sql);
+}
+
+// Function to manually set the subscription start date for testing purposes REMOVE THIS
+function set_test_subscription_date() {
+    global $wpdb;
+    $subscription_table = $wpdb->prefix . 'user_subscriptions';
+    $user_id = get_current_user_id();
+
+    if (!$user_id) {
+        return;
+    }
+
+    // Hardcode today's date as the subscription date for testing
+    $today_date = date('Y-m-d');
+    $wpdb->replace(
+        $subscription_table,
+        array(
+            'user_id' => $user_id,
+            'subscription_start_date' => $today_date,
+        ),
+        array(
+            '%d',
+            '%s',
+        )
     );
+}
+add_action('admin_init', 'set_test_subscription_date'); // This will set the subscription date for your user when accessing the WP admin
+
+
+
+// Function to increment API usage count
+function increment_api_usage($api_name) {
+    global $wpdb;
+    $user_id = get_current_user_id();
+
+    if (!$user_id) {
+        return;
+    }
+
+    $subscription_table = $wpdb->prefix . 'user_subscriptions';
+    $counter_table = $wpdb->prefix . 'api_usage_counter';
+
+    // Get subscription start date for the current user
+    $subscription_start_date = $wpdb->get_var(
+        $wpdb->prepare("SELECT subscription_start_date FROM $subscription_table WHERE user_id = %d", $user_id)
+    );
+
+    if (!$subscription_start_date) {
+        // If no subscription date is found, do not increment counter
+        return;
+    }
+
+    // Determine the current "month cycle" based on the subscription start date
+    $subscription_start = new DateTime($subscription_start_date);
+    $today = new DateTime();
+    $interval = $subscription_start->diff($today);
+
+    // Calculate the current month cycle since subscription (e.g., "Month 0", "Month 1", etc.)
+    $month_cycle = $subscription_start->format('Y-m') . '-' . $interval->m; // e.g., "2024-11-0"
+
+    // Increment the counter for the current user
+    $wpdb->query($wpdb->prepare(
+        "INSERT INTO $counter_table (user_id, api_name, count, month_year) VALUES (%d, %s, 1, %s)
+        ON DUPLICATE KEY UPDATE count = count + 1",
+        $user_id,
+        $api_name,
+        $month_cycle
+    ));
 }
 
 
@@ -189,6 +306,116 @@ function python_code_editor_settings_page() {
 }
 
 
+// Admin page content for displaying API usage statistics
+function python_code_teacher_stats_page() {
+    global $wpdb;
+    $counter_table = $wpdb->prefix . 'api_usage_counter';
+    $user_id = get_current_user_id();
+    $current_month_year = date('Y-m'); // Current month cycle
+
+    // Get the usage statistics for the current user for the current month
+    $api_stats = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT api_name, count, month_year FROM $counter_table WHERE user_id = %d AND month_year = %s ORDER BY month_year DESC",
+            $user_id,
+            $current_month_year
+        ),
+        ARRAY_A
+    );
+
+    // Calculate total API calls made
+    $total_calls = array_reduce($api_stats, function ($sum, $stat) {
+        return $sum + $stat['count'];
+    }, 0);
+
+    // Set the maximum API calls for the month
+    $max_api_calls = 100;
+
+    ?>
+    
+        <h1>Code Teacher API Usage Statistics</h1>
+        <h2>How To Use TeachAllAboutIt Code Teacher</h2>
+        <p>Start by adding a programming challenge on any of your Wordpress pages or posts by adding the shortcode <code>[python_editor tutorial="1"]</code>.</p>
+        <p>A full list of the available programming challenges is available at the Code Teacher website.</p>
+        <p>On a page created just for tutors, add the shortcode <code>[generate_teacher_report]</code>. This will only show for users with the Administrator user type. </p>
+        
+        <div style="display: flex; align-items: flex-start;">
+            <div style="width: 400px; margin-right: 20px;">
+                <p>Standard accounts come with an initial 100 calls to the AI help feature. After this, your account can be topped up with further calls. Your usage is shown below.</p>
+                <p>Your current monthly limit is 100 calls.</p>
+            </div> 
+            <div id="gauge_chart" style="width: 400px; height: 200px;"></div>
+        </div>
+
+        <div class="wrap">
+        <div style="width: 100%;">
+        <table class="widefat fixed">
+            <thead>
+                <tr>
+                    <th>API Name</th>
+                    <th>Usage Count</th>
+                    <th>Month Cycle</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($api_stats)) : ?>
+                    <tr>
+                        <td colspan="3">No usage statistics available for the site.</td>
+                    </tr>
+                <?php else : ?>
+                    <?php foreach ($api_stats as $stat) : ?>
+                        <tr>
+                            <td>
+                                <?php
+                                // Make API name more user-friendly
+                                if ($stat['api_name'] === 'pythonanywhere') {
+                                    echo 'Python Interpreter';
+                                } elseif ($stat['api_name'] === 'openai') {
+                                    echo 'AI Help Calls';
+                                } else {
+                                    echo esc_html($stat['api_name']);
+                                }
+                                ?>
+                            </td>
+                            <td><?php echo esc_html($stat['count']); ?></td>
+                            <td><?php echo esc_html($stat['month_year']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
+                            </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['gauge']});
+        google.charts.setOnLoadCallback(drawGaugeChart);
+
+        function drawGaugeChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Label', 'Value'],
+                ['AI Calls', <?php echo $total_calls; ?>]
+            ]);
+
+            var options = {
+                width: 400,
+                height: 200,
+                redFrom: 80,
+                redTo: 100,
+                yellowFrom: 50,
+                yellowTo: 80,
+                minorTicks: 5,
+                max: <?php echo $max_api_calls; ?>
+            };
+
+            var chart = new google.visualization.Gauge(document.getElementById('gauge_chart'));
+            chart.draw(data, options);
+        }
+    </script>
+    <?php
+}
+
 
 
 
@@ -206,6 +433,7 @@ function python_code_editor_shortcode($atts) {
     // Include tutorial content from an external file
     include plugin_dir_path(__FILE__) . 'tutorials.php';
 
+
     // Select the tutorial based on the attribute
     $tutorial = isset($tutorials[$atts['tutorial']]) ? $tutorials[$atts['tutorial']] : null;
 
@@ -215,6 +443,13 @@ function python_code_editor_shortcode($atts) {
 
     // Check if the user has saved progress
     global $wpdb;
+
+    // Check if feedback table exists and create it if not
+    $chat_table = $wpdb->prefix . 'api_usage_counter';
+    if ($wpdb->get_var("SHOW TABLES LIKE '$chat_table'") != $chat_table) {
+        create_subscription_and_counter_tables();
+    }
+
     $saved_code = '';
     if ($user_id) {
         $table_name = $wpdb->prefix . 'python_tutorials_code';
@@ -279,6 +514,7 @@ function python_code_editor_shortcode($atts) {
                 <div id="speech-bubble">Hi, it looks like you need help with your code...</div>
             </div>
         </div>
+        <div id="feedback-section"></div>
     </div>
     <?php
     return ob_get_clean(); // Return the buffered content
@@ -314,6 +550,8 @@ function python_code_editor_execute_code() {
     if (is_wp_error($response)) {
         wp_send_json_error('Failed to contact the API: ' . $response->get_error_message());
     }
+
+    increment_api_usage('pythonanywhere'); // Increment PythonAnywhere counter
 
     $response_body = wp_remote_retrieve_body($response);
     $data = json_decode($response_body, true);
@@ -370,6 +608,7 @@ function python_code_editor_get_chatgpt_help() {
     if (is_wp_error($response)) {
         wp_send_json_error('Failed to contact the API: ' . $response->get_error_message());
     }
+    increment_api_usage('openai'); // Increment OpenAI counter
 
     $response_body = wp_remote_retrieve_body($response);
     $data = json_decode($response_body, true);
@@ -455,14 +694,31 @@ function load_python_code_function() {
 
     global $wpdb;
     $table_name = $wpdb->prefix . 'python_tutorials_code';
+    $feedback_table = $wpdb->prefix . 'python_feedback';
+
     $row = $wpdb->get_row(
         $wpdb->prepare("SELECT saved_code, is_complete FROM $table_name WHERE user_id = %d AND tutorial_id = %d", $user_id, $tutorial_id)
     );
 
+    // Fetch previous feedback
+    $feedback_rows = $wpdb->get_results(
+        $wpdb->prepare("SELECT feedback_text, feedback_date FROM $feedback_table WHERE user_id = %d AND tutorial_id = %d ORDER BY feedback_date DESC", $user_id, $tutorial_id),
+        ARRAY_A
+    );
+
+    $feedback_list = "<h3>Your previous help: </h3><ul>";
+    if ($feedback_rows) {
+        foreach ($feedback_rows as $feedback) {
+            $feedback_list = $feedback_list . '<li>' . esc_html($feedback['feedback_text']) . '- <small>' .  date('d/m/Y g:i A', strtotime($feedback['feedback_date'])) . '</small></li>';
+        }
+    }
+    $feedback_list = $feedback_list . '</ul>';
+
+
     if ($row) {
-        wp_send_json_success(['code' => $row->saved_code, 'is_complete' => $row->is_complete]);
+        wp_send_json_success(['code' => $row->saved_code, 'is_complete' => $row->is_complete, 'feedback' => $feedback_list]);
     } else {
-        wp_send_json_success(['code' => $skeleton_code, 'is_complete' => 0]);
+        wp_send_json_success(['code' => $skeleton_code, 'is_complete' => 0, 'feedback' => $feedback_list]);
     }
 }
 
@@ -567,6 +823,7 @@ function python_code_editor_evaluate_code() {
         wp_send_json_error('Failed to contact the API: ' . $response->get_error_message());
     }
 
+    increment_api_usage('openai'); // Increment OpenAI counter
     $response_body = wp_remote_retrieve_body($response);
     $data = json_decode($response_body, true);
 

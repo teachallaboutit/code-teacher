@@ -24,6 +24,7 @@
     const outputElement = document.getElementById('output');
     const challengeText = document.querySelector('.challenge-text').innerText.replace('Challenge: ', '');
     const unitTest = document.getElementById('unit-test');
+    const feedbackElement = document.getElementById('feedback-section');
 
     let tutorialId = null;
     let skeletonCode = null;
@@ -92,6 +93,9 @@
                 if (data.success) {
                     if (typeof data.data.code === 'string' && data.data.code !== "") {
                         editor.setValue(data.data.code.replace(/\\n/g, '\n'));
+                        //show feedback here
+                        console.log('Feedback returned:', data.data.feedback);
+                        feedbackElement.innerHTML = data.data.feedback;
                     } else {
                         console.log('Saved code is not valid or empty, setting to skeleton.');
                         editor.setValue(skeletonCode);
